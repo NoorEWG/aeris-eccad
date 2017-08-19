@@ -1,0 +1,110 @@
+:host {
+	display: block;
+	max-width: 95vw;
+	margin: 5px;
+	font-family: 'Open Sans', sans-serif;
+}
+
+.noselect {
+	-webkit-touch-callout: none;
+  /* iOS Safari */
+	-webkit-user-select: none;
+  /* Chrome/Safari/Opera */
+	-khtml-user-select: none;
+  /* Konqueror */
+	-moz-user-select: none;
+  /* Firefox */
+	-ms-user-select: none;
+  /* Internet Explorer/Edge */
+	user-select: none;
+  /* Non-prefixed version, currently not supported by any browser */;
+}
+
+.component-container header {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	padding: 5px 10px;
+	color: #fff;
+	/*background-color: var(--main-color, #4765A0);*/
+	background-color: #4765A0;
+}
+
+.component-container header h3 {
+	margin: 5px 0;
+	border: none;
+	background-color: transparent;
+}
+
+.component-container header h3 .fa {
+	display: var(--title-icon-display, inline);
+	margin-right: 10px;
+}
+
+.component-container header .aeris-icon-group {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+}
+
+.component-container main {
+	padding: 10px;
+	border: 1px solid #ddd;
+	border-top: none;
+	word-wrap: break-word;
+}
+
+.component-container main h5 {
+	margin: 10px 0 5px 0;
+	/*color: var(--main-color, #4765A0);*/
+	color: #4765A0;
+}
+
+.metadata-icon-btn {
+	margin: 0 10px;
+	color: #4765A0;
+	cursor: pointer;
+	transition: 0.3s;
+}
+
+.metadata-icon-btn:hover {
+	opacity: 0.6;
+}
+
+.metadata-text-btn {
+	margin: 5px 0;
+	padding: 2px 5px;
+	display: inline-block;
+	font-size: 12px;
+	line-height: 1.5em;
+	background-color: #fff;
+	color: #4765A0;
+	border: 1px solid;
+	outline: none;
+	cursor: pointer;
+}
+
+.metadata-text-btn:hover {
+	background-color: #4765A0;
+	color: #fff;
+	border-color: #4765A0;
+}
+
+.metadata-text-btn .metadata-icon-btn {
+	margin: 0 5px 0 0;
+}
+
+.flash {
+	animation-name: flash;
+	animation-duration: 0.6s;
+}
+
+@keyframes flash {
+	from {
+		box-shadow: 0 0 10px 2px #4765A0;
+	}
+
+	to {
+		box-shadow: 0;
+	}
+}

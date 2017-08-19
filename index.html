@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>Vue Example</title>
+	<link rel="stylesheet" href="src/style/aeris-metadata-shared-style.css">
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/document-register-element/1.4.1/document-register-element.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.18.1/moment-with-locales.min.js"></script>
+	<style>
+	body {
+        font-family: 'Open Sans', sans-serif;
+        margin: 0;
+      }
+	
+	</style>
+  </head>
+  <body>
+  
+  <div id="aeris-wc">
+  	<h2>Aeris cartouche</h2>
+    <aeris-cartouche>Coucou</aeris-cartouche>
+	<aeris-cartouche icon="bath">Coucou bath</aeris-cartouche>
+	<aeris-cartouche >Coucou</aeris-cartouche>
+	<aeris-cartouche edit=true >Coucou_edit</aeris-cartouche>
+    <aeris-cartouche >Coucou</aeris-cartouche>
+	<aeris-cartouche >Coucou</aeris-cartouche>
+	<h2>Aeris spinner</h2>
+	<aeris-spinner ref="spin1" size="small" id="sp1"></aeris-spinner>
+	<aeris-spinner id="spin2">Texte</aeris-spinner>
+	<h2>Aeris metadata international field</h2>
+	<aeris-metadata-international-field value='{"fr": "Un gars sympa", "en": "A nice guy"}' lang="fr"></aeris-metadata-international-field>
+	<aeris-metadata-international-field value='{"fr": "Un gars sympa", "en": "A nice guy"}' lang="en"></aeris-metadata-international-field>
+		<aeris-metadata-international-field markdown="true" value='{"fr": "Un <b>gars</b> sympa", "en": "A nice guy"}' lang="fr"></aeris-metadata-international-field>
+	<aeris-metadata-international-field markdown="true" value='{"fr": "Un gars sympa", "en": "A <b>nice</b> guy"}' lang="en"></aeris-metadata-international-field>
+	
+	<h2>Aeris metadata contact</h2>
+	<aeris-metadata-contact ref="contact1" id="contact"></aeris-metadata-contact>
+	<h2>Aeris browser alert</h2>
+	<aeris-browser-alert></aeris-browser-alert>
+	<h2>aeris-metadata-temporal-extend</h2>
+	<aeris-metadata-temporal-extent></aeris-metadata-temporal-extent>
+	<aeris-metadata-temporal-extent begin="1975-01-24" end="now" ></aeris-metadata-temporal-extent>
+	<aeris-metadata-temporal-extent begin="1975-01-24" end="1975-11-24" comment='{"fr": "Un gars sympa", "en": "A nice guy"}'></aeris-metadata-temporal-extent>
+	<h2>aeris-metadata-temporal-extend</h2>
+	<aeris-metadata-temporal-extents></aeris-metadata-temporal-extents>
+	<aeris-metadata-temporal-extents lang="en"></aeris-metadata-temporal-extents>
+	
+  </div>
+    <script src="dist/build.js"></script>
+    <script>
+    	/* var obj = {fr: 'le petit <b>html</b>', en: ''};
+    	singletonVue.$refs.if1.setValue(obj);
+    	
+    	var contact = {name: 'jean dupont', organisation:"nasa", email:"toto@gmail.com", comment:{fr: 'Un gars sympa', en: ''}};
+    	singletonVue.$refs.contact1.setValue(contact); */
+    	
+    </script>
+  </body>
+</html>

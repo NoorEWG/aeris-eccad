@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>Eccad Test</title>
+	<link rel="stylesheet" href="src/style/aeris-metadata-shared-style.css">
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+	<link rel="stylesheet" href="src/style/eccad.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/ol3/4.2.0/ol.css">
+	
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/document-register-element/1.4.1/document-register-element.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.18.1/moment-with-locales.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highcharts/5.0.12/highstock.js"></script>		
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/highcharts/5.0.12/js/modules/exporting.js"></script>		
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/ol3/4.2.0/ol.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/lodash.js/4.17.4/lodash.min.js"></script>
+  </head>
+  <body class="containerEccad borderBody">
+    <div>
+      <aeris-eccad-header></aeris-eccad-header>
+    <div>
+
+    <div>
+      <aeris-eccad-mainmenu></aeris-eccad-mainmenu>
+    </div>  
+    
+    <div>
+      <aeris-eccad-selection service="http://eccad.aeris-data.fr/eccad2web/rest/"></aeris-eccad-selection>
+    </div> 
+  
+    <div>
+      <h1>catalog component</h1>
+      <aeris-eccad-catalog service="http://eccad.aeris-data.fr/eccad2web/rest/dataset/inventorydatasets?catgroup=emissions"></aeris-eccad-catalog>
+    </div>
+
+    <div>
+      <h1>barchart component</h1>
+      <aeris-eccad-barchart service="http://eccad.aeris-data.fr/eccad2web/rest/dataanalysis/barchart"></aeris-eccad-barchart>
+    </div>
+
+    <div>
+      <h1>map component</h1> 	 	
+      <aeris-eccad-map service="http://thredds.sedoo.fr/thredds/wms/eccad/" name="map1"></aeris-eccad-map> 	
+      <aeris-eccad-map service="http://thredds.sedoo.fr/thredds/wms/eccad/" first="false" name="map2"></aeris-eccad-map> 	  
+    </div>
+
+     <div>
+      <h1>dashboard</h1> 	 	
+      <aeris-eccad-dashboard></aeris-eccad-dashboard>
+     </div>
+
+  <script src="dist/build.js"></script>
+
+</body>
+</html>
