@@ -1,5 +1,4 @@
 <template>
-  <!--span v-if="visible"-->
   <span>	  
     <div :id="name"></div>
   </span>
@@ -210,12 +209,16 @@ export default {
             EventBus.$emit('beginDates', JSON.stringify(beginDates));
             EventBus.$emit('endDates', JSON.stringify(beginDates));
             EventBus.$emit('mapParams', JSON.stringify(beginDates));
+			EventBus.$emit('min', JSON.stringify(min));
+			EventBus.$emit('max', JSON.stringify(max));
           }
           else {
             EventBus.$emit('beginDates2', JSON.stringify(beginDates));
             EventBus.$emit('endDates2', JSON.stringify(beginDates));
             EventBus.$emit('mapParams2', JSON.stringify(beginDates));    
-          }
+			EventBus.$emit('min2', JSON.stringify(min));
+			EventBus.$emit('max2', JSON.stringify(max));
+		  }
           this.draw();          
         });
       } 

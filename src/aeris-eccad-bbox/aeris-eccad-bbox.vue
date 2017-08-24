@@ -35,10 +35,12 @@ export default {
   data () {
     return {
       geospatial: {
-        latMinGeospatial : -180,
-        latMaxGeospatial : 180,
-        lonMinGeospatial : -90,
-        lonMaxGeospatial : 90,
+        boundingBox : {
+          latmin : -180,
+          latmax : 180,
+          lonmin : -90,
+          lonmax : 90
+        }
       },
       lonMin : -90,
       lonMax : 90,

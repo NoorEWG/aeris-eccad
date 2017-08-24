@@ -52,9 +52,11 @@ export default {
     selectedDataset (value) {
         if(this.premier) {
     	  EventBus.$emit('dataset', JSON.stringify(value));
+        EventBus.$emit('sectors', null);
     	} 
     	else {
     	  EventBus.$emit('dataset2', JSON.stringify(value));
+        EventBus.$emit('sectors2', null);
     	}
     }
   },
@@ -78,17 +80,15 @@ export default {
   created: function () {
     console.log("Aeris Eccad Dataset - Creating");
     if(this.premier) {
-		EventBus.$on('parameter', data => {
-		   this.parameter = JSON.parse(data);
-		});
-		console.log("parameter: " + JSON.stringify(this.parameter));
-	} 
-	else {
-		EventBus.$on('parameter2', data => {
-		   this.parameter = JSON.parse(data);
-		});
-		console.log("parameter2: " + JSON.stringify(this.parameter));
-	}
+      EventBus.$on('parameter', data => {
+        this.parameter = JSON.parse(data);
+      });
+	  } 
+	  else {
+		  EventBus.$on('parameter2', data => {
+		     this.parameter = JSON.parse(data);
+		  });
+	  }
   },
   
   computed: {
@@ -99,7 +99,6 @@ export default {
   refresh: function() {
   	   if (this.datasetService && this.parameter && this.parameter.id) {
 	  	   var url = this.datasetService  + "/" + this.parameter.id;
-	  	   console.log(url);
 	   	   this.$http.get(url).then((response)=>{this.handleSuccess(response)},(response)=>{this.handleError(response)});
    	   }
    },
@@ -107,6 +106,7 @@ export default {
   handleSuccess : function(response) {
         this.datasets = response.data;
         this.datasets[0].shortName = "Select";
+        this.selectedDataset = this.datasets[0];
   },
   handleError: function(response) {
   		console.log("Aeris-Eccad-Dataset - Error while accessing server:"); 

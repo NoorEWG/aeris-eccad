@@ -32,7 +32,7 @@ export default {
   
   data () {
     return {
-        sectorService: this.service,
+      sectorService: this.service,
     	sectors: {type: Array},
     	selectedSector: {type: Object},
     	premier: this.first,
@@ -82,29 +82,23 @@ export default {
     if(this.premier) {
 	    EventBus.$on('dataset', data => {
 		   this.dataset = JSON.parse(data);
-		   console.log("dataset is: " + JSON.stringify(this.dataset));
 		});
 		EventBus.$on('category', data => {
 		   this.category = JSON.parse(data);
-		   console.log("category is: " + JSON.stringify(this.dataset));
 		});
 		EventBus.$on('parameter', data => {
 		   this.parameter = JSON.parse(data);
-		   console.log("parameter is: " + JSON.stringify(this.dataset));
 		});
 	} 
 	else {
 		 EventBus.$on('dataset2', data => {
 		   this.dataset = JSON.parse(data);
-		   console.log("dataset2 is: " + JSON.stringify(this.dataset));
 		});
 		EventBus.$on('category2', data => {
 		   this.category = JSON.parse(data);
-		   console.log("category2 is: " + JSON.stringify(this.dataset));
 		});
 		EventBus.$on('parameter2', data => {
 		   this.parameter = JSON.parse(data);
-		   console.log("parameter2 is: " + JSON.stringify(this.dataset));
 		});	
 	}
   },
@@ -123,8 +117,12 @@ export default {
       
   handleSuccess : function(response) {
         this.sectors = response.data;
-        if(this.sectors.length > 0) {
+        if(this.sectors.length > 1) {
         	this.hasSector = true;
+          this.selectedSector = this.sectors[0];
+        }
+        else {
+          this.hasSector = false;
         }
         this.$http.get(this.sectorService + "/inventorycategory/" + this.dataset.id  + "/" + this.category.id )
            .then(function (result) {                                      

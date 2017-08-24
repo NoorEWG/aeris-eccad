@@ -5,7 +5,7 @@
 
 <template>
 	<div>
-		<div class="aeris-eccad-color-label">Colors</div>
+		<div class="aeris-eccad-color-label">Color table</div>
 		<div class="aeris-eccad-color-list">
 			<select v-model="selectedColor">
 	  			<option v-for="color in colors" v-bind:value="color">
@@ -73,6 +73,7 @@ export default {
       
   handleSuccess : function(response) {
     this.colors = response.data;
+    this.selectedColor = response.data[2];
   },
   
   handleError: function(response) {
@@ -102,7 +103,7 @@ export default {
 }
 
 .aeris-eccad-color-list > select {
-   width: 138px;
+   width: 120px;
 }
 	
 </style>

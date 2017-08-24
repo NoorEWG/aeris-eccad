@@ -91,6 +91,7 @@ export default {
       
   handleSuccess : function(response) {
         this.categories = response.data;
+        this.selectedCategory = this.categories[0];
         var tempCategories = JSON.stringify(this.categories);
         EventBus.$emit('categories', tempCategories);
   },

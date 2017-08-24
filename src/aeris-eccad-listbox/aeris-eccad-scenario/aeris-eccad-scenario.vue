@@ -106,10 +106,13 @@ export default {
       
   handleSuccess : function(response) {
         this.scenarios = response.data;
-        console.log(JSON.stringify(this.scenarios));
         if(this.scenarios.length > 1) {
-            this.scenarios[0].displayNameScenario = "Select"; 
+          this.scenarios[0].displayNameScenario = "Select"; 
         	this.hasScenario = true;
+          this.selectedScenario = this.scenarios[0];
+        }
+        else {
+          this.hasScenario = false;
         }
         
         

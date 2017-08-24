@@ -116,7 +116,7 @@ export default {
 .aeris-eccad-region-label {
     font-weight: normal;
     color: navy;
-    width: 78px;
+    width: 50px;
     display: inline-block;
 }
 .aeris-eccad-region-list {
@@ -124,7 +124,7 @@ export default {
 }
 
 .aeris-eccad-region-list > select {
-   width: 138px;
+   width: 150px;
 }
 	
 </style>

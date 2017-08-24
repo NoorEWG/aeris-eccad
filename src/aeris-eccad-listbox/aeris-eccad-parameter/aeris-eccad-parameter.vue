@@ -107,6 +107,7 @@ export default {
       
   handleSuccess : function(response) {
         this.parameters = response.data;
+        this.selectedParameter = this.parameters[0];
         
         
   },

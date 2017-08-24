@@ -110,7 +110,7 @@ export default {
 .aeris-eccad-geospatial-label {
     font-weight: normal;
     color: navy;
-    width: 78px;
+    width: 50px;
     display: inline-block;
 }
 .aeris-eccad-geospatial-list {
@@ -118,7 +118,7 @@ export default {
 }
 
 .aeris-eccad-geospatial-list > select {
-   width: 138px;
+   width: 150px;
 }
 	
 </style>

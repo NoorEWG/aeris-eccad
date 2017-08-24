@@ -832,6 +832,10 @@ registerButton {
         height: 24px;
     }
 
+    .selectItemH {
+        height: 50px;
+    }
+
     .selectItemLg {
         height: 24px;
     }
@@ -900,6 +904,12 @@ registerButton {
         width: 50%;
         height: 24px;
     }
+
+    .selectItemH {
+        width: 50%;
+        height: 50px;
+    }
+
 
     .selectItemLg {
         width: 100%;

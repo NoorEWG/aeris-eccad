@@ -2,7 +2,6 @@
  dependances: 
 */
 
-
 <template>
   <div class="selectionFlex">
       <div class="selectionColumn">
@@ -57,25 +56,50 @@
         </div>
       </div>
 
-      <div class="sectionDrawColumn">
-        <aeris-eccad-rb-unit :service="unitService"></aeris-eccad-rb-unit> 
-        <button>Draw</button>
-        <aeris-eccad-rb-unit :service="unitService" first="false"></aeris-eccad-rb-unit> 	
+      <div class="selectionDrawColumn">
+        <div class="selectionDrawRow">
+          <div class="selectItemH">
+            <aeris-eccad-rb-unit :service="unitService"></aeris-eccad-rb-unit> 
+          </div>
+          <div class="selectItemH">  
+            <aeris-eccad-mask :service="maskService"></aeris-eccad-mask>
+            <aeris-eccad-geospatial :service="geospatialService"></aeris-eccad-geospatial>
+          </div>
+        </div>
+        <div class="selectionDrawRow">
+            <button>Draw</button>
+            <aeris-eccad-bbox></aeris-eccad-bbox>
+        </div>
+        <div class="selectionDrawRow">
+          <div class="selectItem">
+            <aeris-eccad-rb-unit :service="unitService" first="false"></aeris-eccad-rb-unit> 	
+          </div>
+        </div>
       </div>
  
-      <div class="selectionColumnM">
-        <aeris-eccad-mask :service="maskService"></aeris-eccad-mask>
-        <aeris-eccad-geospatial :service="geospatialService"></aeris-eccad-geospatial>
-        <aeris-eccad-bbox></aeris-eccad-bbox>
-      </div>
-      
       <div class="selectionColumn">
-        <aeris-eccad-color :service="colorService"></aeris-eccad-color>
+        <div class="selectionRow">
+          <div class="selectItem">
+            <aeris-eccad-color :service="colorService"></aeris-eccad-color>
+            <aeris-eccad-numcolors></aeris-eccad-numcolors>
+          </div>
+          <div class="selectItem">
+            <aeris-eccad-range></aeris-eccad-range>
+            <aeris-eccad-scale></aeris-eccad-scale>
+          </div>
+          <div class="selectItem">
+            <aeris-eccad-min></aeris-eccad-min>
+            <aeris-eccad-max></aeris-eccad-max>
+          </div>
+           <div class="selectItem">
+            <aeris-eccad-min first="false"></aeris-eccad-min>
+            <aeris-eccad-max first="false"></aeris-eccad-max>
+          </div>
+        </div>
       </div>
-
   </div>     
 </template>
-
+  
 <script>
 import { EventBus } from '../aeris-event-bus/aeris-event-bus.js';
 export default {
