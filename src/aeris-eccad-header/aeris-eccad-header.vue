@@ -76,6 +76,7 @@ export default {
   
   created: function () {
     console.log("Aeris Eccad Header - Creating");
+    this.getCategoryGroups();
     this.getSectors();
     this.getScenarios();
     this.getSpecies();
@@ -89,6 +90,12 @@ export default {
   
   methods: {
   
+  getCategoryGroups: function() {
+    this.$http.get(this.eccadConfig.api + "dataset/categorygroups")
+    .then(function (result) {
+      EventBus.$emit('catGroups', JSON.stringify(result.data));
+    });   
+  },
   getSectors: function() {
     this.$http.get(this.eccadConfig.api + "data/sectors")
     .then(function (result) {

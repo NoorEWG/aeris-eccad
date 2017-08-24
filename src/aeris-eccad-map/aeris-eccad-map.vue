@@ -64,7 +64,7 @@ export default {
     },
 	mainmenu (value) {
 	  console.log("main menu changed: " + JSON.stringify(this.mainmenu))
-	  if(this.mainmenu.text === 'Online-tools') {
+	  if(this.mainmenu === 'tools') {
 		this.visible = true
 	  }
 	  else {
@@ -101,11 +101,9 @@ export default {
     EventBus.$on('useMask', data => {
 		   this.useMask = data;
 		});
-    
 	EventBus.$on('mainmenu', data => {
 		   this.mainmenu = data;
 		});
-    
 
     if(this.first && !this.compare) {
        EventBus.$on('dataset', data => {

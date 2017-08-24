@@ -7,23 +7,22 @@
         <div class="menuEccad">
             <div>
                 <ul class="menuEccadUl">
-                    <li class="menuItemEccad" v-bind="selectedLink"  v-for="link in links">
-                         <div class="menu" v-on:click="change">{{ link.text }}</div>
+                    <li class="menuItemEccad" v-bind:key="link.menu" v-for="link in links">
+                         <div class="menu" @click="change(link.menu)">{{ link.text }}</div>
                     </li>
                 </ul>           
             </div>
              
-            <!--div data-ng-show="currentUrl.includes('catalog')">
-                <span data-ng-repeat="catgroup in categoryGroups">
-                    <label class="spacedradiobutton categoryGroupButtons" data-ng-style="{color: catgroup.color};">
-                        <input type="radio" name="categoryGroup" value="{{catgroup.id}}" data-ng-model="categoryGroup" data-ng-click="changeCategoryGroup(categoryGroup)" />{{catgroup.name}}
+            <div v-if="showCategories">
+                <span v-bind:key="catgroup.id" v-for="catgroup in categoryGroups">
+                    <label class="spacedradiobutton categoryGroupButtons" :class="{color: catgroup.color}">
+                        <input type="radio" name="categoryGroup" :value="catgroup.id" v-model="categoryGroup" data-ng-click="changeCategoryGroup(categoryGroup)" />{{catgroup.name}}
                     </label>
                 </span>
-    
-            </div-->
+            </div>
             <div class="hideShow">
-                <a data-ng-if="!hideheader"><img src="images/hide.png" alt="hide" data-ng-click="hideHeader(true)" /></a>
-                <a data-ng-if="hideheader"><img src="images/show.png" alt="show" data-ng-click="hideHeader(false)" /></a>
+                <a v-if="!hideheader"><img src="images/hide.png" alt="hide" @click="hideHeader(true)" /></a>
+                <a v-if="hideheader"><img src="images/show.png" alt="show" @click="hideHeader(false)" /></a>
             </div>
         </div>
     </div>    
@@ -38,12 +37,22 @@ export default {
   
   data () {
     return {
-      links: [],  
+      links: [],
+      categoryGroups: [],  
+      showCategories : false,
       selectedLink: {}    
     }
   },
   
   watch: {
+    selectedLink (value) {
+        if(value.menu === 'catalog') {
+            this.showCategories = true;
+        }
+        else {
+            this.showCategories = false;
+        }
+    }, 
   },
   
   mounted: function () {
@@ -58,11 +67,24 @@ export default {
   created: function () {
     console.log("Aeris Eccad Main Menu - Creating");
     this.links = [
-      {url: '', text: 'Home'},
-      {url: '', text: 'Catalogue'},
-      {url: '', text: 'Online-Tools'},
-      {url: '', text: 'Help'}
-    ]
+      {url: '', text: 'Home', menu: 'home'},
+      {url: '', text: 'Catalogue', menu: 'catalog'},
+      {url: '', text: 'Online-Tools', menu: 'tools'},
+      {url: '', text: 'Help', menu: 'help'}
+    ];
+    //EventBus.$on('mainmenu', data => {
+    //    this.selectedLink = JSON.parse(data)
+	//});
+    EventBus.$on('catalogmenu', data => {
+        this.selectedLink = JSON.parse(data)
+	});
+    EventBus.$on('toolsmenu', data => {
+        this.selectedLink = JSON.parse(data)
+	});
+    EventBus.$on('catGroups', data => {
+        this.categoryGroups = JSON.parse(data)
+	});
+
   },
   
   computed: {
@@ -70,8 +92,8 @@ export default {
   
   methods: {
     
-    change: function() {
-        EventBus.$emit('mainmenu', this.selectedLink)
+    change: function(menu) {
+        EventBus.$emit('mainmenu', JSON.stringify(menu))
     }
   }
 }

@@ -61,8 +61,18 @@
         <aeris-eccad-rb-unit :service="unitService"></aeris-eccad-rb-unit> 
         <button>Draw</button>
         <aeris-eccad-rb-unit :service="unitService" first="false"></aeris-eccad-rb-unit> 	
-        
       </div>
+ 
+      <div class="selectionColumnM">
+        <aeris-eccad-mask :service="maskService"></aeris-eccad-mask>
+        <aeris-eccad-geospatial :service="geospatialService"></aeris-eccad-geospatial>
+        <aeris-eccad-bbox></aeris-eccad-bbox>
+      </div>
+      
+      <div class="selectionColumn">
+        <aeris-eccad-color :service="colorService"></aeris-eccad-color>
+      </div>
+
   </div>     
 </template>
 
@@ -86,7 +96,10 @@ export default {
       scenarioService: this.service + 'data/scenarios',
       datasetService: this.service + 'data/inventories',
       sectorService: this.service + 'data',
-      unitService: this.service + 'data/totalunit'
+      unitService: this.service + 'data/totalunit',
+      maskService: this.service + 'dataanalysis/masks',
+      colorService: this.service + 'data/colors',
+      geospatialService: this.service + 'data/geospatial'
     }
   },
   
