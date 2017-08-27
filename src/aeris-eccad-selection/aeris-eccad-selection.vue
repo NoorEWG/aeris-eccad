@@ -29,7 +29,9 @@
             <aeris-eccad-date></aeris-eccad-date>
           </div>
         </div>
-        buttons todo
+  
+        <aeris-eccad-reset-compare></aeris-eccad-reset-compare> 
+         
         <div class="selectionRow"> 
           <div class="selectItem">
             <aeris-eccad-category :service="categoryService" first="false"></aeris-eccad-category>
@@ -81,18 +83,35 @@
         <div class="selectionRow">
           <div class="selectItem">
             <aeris-eccad-color :service="colorService"></aeris-eccad-color>
+          </div>
+          <div class="selectItem">
             <aeris-eccad-numcolors></aeris-eccad-numcolors>
           </div>
+        </div>
+        <div class="selectionRow">  
           <div class="selectItem">
             <aeris-eccad-range></aeris-eccad-range>
+          </div>
+          <div class="selectItem">  
             <aeris-eccad-scale></aeris-eccad-scale>
           </div>
+        </div>  
+        <div class="selectionRow">  
           <div class="selectItem">
             <aeris-eccad-min></aeris-eccad-min>
+          </div>
+          <div class="selectItem">  
             <aeris-eccad-max></aeris-eccad-max>
           </div>
-           <div class="selectItem">
+        </div>
+
+        <aeris-eccad-comparebox></aeris-eccad-comparebox>
+        
+        <div class="selectionRow">    
+          <div class="selectItem">
             <aeris-eccad-min first="false"></aeris-eccad-min>
+          </div>
+          <div class="selectItem">  
             <aeris-eccad-max first="false"></aeris-eccad-max>
           </div>
         </div>

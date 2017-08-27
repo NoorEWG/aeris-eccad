@@ -39,6 +39,8 @@ import AerisEccadScale from './aeris-eccad-listbox/aeris-eccad-scale/aeris-eccad
 import AerisEccadNumcolors from './aeris-eccad-listbox/aeris-eccad-numcolors/aeris-eccad-numcolors.vue'
 import AerisEccadMin from './aeris-eccad-minmax/aeris-eccad-min.vue'
 import AerisEccadMax from './aeris-eccad-minmax/aeris-eccad-max.vue'
+import AerisEccadResetCompare from './aeris-eccad-button/aeris-eccad-reset/aeris-eccad-compare.vue'
+import AerisEccadCompareBox from './aeris-eccad-comparebox/aeris-eccad-comparebox.vue'
 
 import AerisEccadSelection from './aeris-eccad-selection/aeris-eccad-selection.vue'
 import AerisEccadApp from './aeris-eccad-app/aeris-eccad-app.vue'
@@ -68,6 +70,9 @@ Vue.customElement('aeris-eccad-scale',AerisEccadScale);
 Vue.customElement('aeris-eccad-numcolors',AerisEccadNumcolors);
 Vue.customElement('aeris-eccad-min',AerisEccadMin);
 Vue.customElement('aeris-eccad-max',AerisEccadMax);
+Vue.customElement('aeris-eccad-reset-compare',AerisEccadResetCompare);
+Vue.customElement('aeris-eccad-comparebox',AerisEccadCompareBox);
+
 
 Vue.customElement('aeris-eccad-selection',AerisEccadSelection);
 Vue.customElement('aeris-eccad-app',AerisEccadApp);
