@@ -4,7 +4,7 @@
 
 
 <template>
-	<div class="mapCompareBox">
+	<div class="mapCompareBox" v-show="showCompareBox">
     <div class="selectionDrawRow">
       <div class="selectText colorNavy">Arithmetic</div>
       <div>
@@ -38,6 +38,7 @@ export default {
   
   data () {
     return {
+      showCompareBox: false,
       operands: [
         {id: 1, name: '+'},
         {id: 2, name: '-'},
@@ -61,6 +62,12 @@ export default {
   
   created: function () {
     console.log("Aeris Eccad Comparebox - Creating");
+    EventBus.$on('toolsmenu', data => {
+		   var tools = JSON.parse(data);
+       if(tools.text === 'Mapcompare') {
+         this.showCompareBox = true
+       }
+    });     
   },
   
   computed: {

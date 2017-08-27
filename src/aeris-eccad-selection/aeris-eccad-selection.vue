@@ -69,7 +69,7 @@
           </div>
         </div>
         <div class="selectionDrawRow">
-            <button>Draw</button>
+            <aeris-eccad-drawbuttons></aeris-eccad-drawbuttons> 
             <aeris-eccad-bbox></aeris-eccad-bbox>
         </div>
         <div class="selectionDrawRow">

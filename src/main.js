@@ -41,6 +41,8 @@ import AerisEccadMin from './aeris-eccad-minmax/aeris-eccad-min.vue'
 import AerisEccadMax from './aeris-eccad-minmax/aeris-eccad-max.vue'
 import AerisEccadResetCompare from './aeris-eccad-button/aeris-eccad-reset/aeris-eccad-compare.vue'
 import AerisEccadCompareBox from './aeris-eccad-comparebox/aeris-eccad-comparebox.vue'
+import AerisEccadDrawButtons from './aeris-eccad-button/aeris-eccad-draw/aeris-eccad-draw.vue'
+
 
 import AerisEccadSelection from './aeris-eccad-selection/aeris-eccad-selection.vue'
 import AerisEccadApp from './aeris-eccad-app/aeris-eccad-app.vue'
@@ -72,6 +74,7 @@ Vue.customElement('aeris-eccad-min',AerisEccadMin);
 Vue.customElement('aeris-eccad-max',AerisEccadMax);
 Vue.customElement('aeris-eccad-reset-compare',AerisEccadResetCompare);
 Vue.customElement('aeris-eccad-comparebox',AerisEccadCompareBox);
+Vue.customElement('aeris-eccad-drawbuttons',AerisEccadDrawButtons);
 
 
 Vue.customElement('aeris-eccad-selection',AerisEccadSelection);

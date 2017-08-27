@@ -61,6 +61,7 @@ export default {
       {url: '', text: 'Mapcompare', menu: 'tools' },
       {url: '', text: 'Timeseries Analysis', menu: 'tools' },
       {url: '', text: 'Scatterplot', menu: 'tools'},
+      {url: '', text: 'Download', menu: 'tools'},
       {url: '', text: 'Help', menu: 'tools'}
     ]
   },

@@ -50,8 +50,7 @@ export default {
   },
   
   created: function () {
-    console.log("Aeris Eccad ResetCompare- Creating");
- 
+    console.log("Aeris Eccad ResetCompare- Creating"); 
   },
   
   computed: {
