@@ -4,12 +4,12 @@
 
 
 <template>
-	<div v-if="hasScenario">
-		<div class="aeris-eccad-scenario-label">Scenario</div>
-		<div class="aeris-eccad-scenario-list">
-			<select v-model="selectedScenario">
-	  			<option v-for="scenario in scenarios" v-bind:value="scenario">
-	    			{{ scenario.displayNameScenario }}
+	<div v-if="!isGeo">
+		<div class="aeris-eccad-resolution-label">Resolution</div>
+		<div class="aeris-eccad-resolution-list">
+			<select v-model="selectedResolution">
+	  			<option v-for="resolution in resolutions" v-bind:value="resolution">
+	    			{{ resolution.fullNameResolution }}
 	  			</option>
 			</select>
 		</div>
@@ -32,30 +32,30 @@ export default {
   
   data () {
     return {
-      scenarioService: this.service,
-    	scenarios: {type: Array},
-    	selectedScenario: {type: Object},
+      resolutionService: this.service,
+    	resolutions: {type: Array},
+    	selectedResolution: {type: Object},
     	premier: this.first,
     	dataset: {type: Object},
-    	hasScenario: false
+    	isGeo: false
     }
   },
   
   watch: {
     service (value) {
-	      this.scenarioService = value
+	      this.resolutionService = value
 	      this.refresh();
     },
     dataset (value) {
     	this.dataset = value
     	this.refresh();
     },
-    selectedScenario (value) {
+    selectedResolution (value) {
       if(this.premier) {
-        EventBus.$emit('scenario', JSON.stringify(value));
+        EventBus.$emit('resolution', JSON.stringify(value));
       }
       else {
-        EventBus.$emit('scenario2', JSON.stringify(value));
+        EventBus.$emit('resolution2', JSON.stringify(value));
       }	  
     }
   },
@@ -69,28 +69,26 @@ export default {
   
   destroyed: function() {
     if(this.premier) {
-  	  EventBus.$off('scenario', {})
+  	  EventBus.$off('resolution', {});
   	}
   	else {
-  	  EventBus.$off('scenario2', {})
+  	  EventBus.$off('resolution2', {});
   	}
   },
   
   created: function () {
-    console.log("Aeris Eccad Scenario - Creating");
+    console.log("Aeris Eccad Resolution - Creating");
     if(this.premier) {
 	    EventBus.$on('dataset', data => {
 		   this.dataset = JSON.parse(data);
-		});
-	} 
-	else {
-		 EventBus.$on('dataset2', data => {
-		   this.dataset = JSON.parse(data);
-		});	
-	}
+		  });
+	  } 
+	  else {
+		  EventBus.$on('dataset2', data => {
+		    this.dataset = JSON.parse(data);
+		  });
+	  }
   },
-  
- 
   
   computed: {
   },
@@ -98,35 +96,35 @@ export default {
   methods: {
   
   refresh: function() {
-  	   if (this.scenarioService && this.dataset && this.dataset.id) {
-	  	   var url = this.scenarioService  + "/" + this.dataset.id;
+  	   if (this.resolutionService && this.dataset && this.dataset.id) {
+         var url = this.resolutionService  + "/" +this.dataset.id;
 	   	   this.$http.get(url).then((response)=>{this.handleSuccess(response)},(response)=>{this.handleError(response)});
    	   }
-   },
+  },
       
   handleSuccess : function(response) {
-        this.scenarios = response.data;
-        if(this.scenarios.length > 1) {
-          this.scenarios[0].displayNameScenario = "Select"; 
-        	this.hasScenario = true;
-          this.selectedScenario = this.scenarios[1];
-        }
-        else {
-          this.hasScenario = false;
-        }
-        
-        
+    this.resolutions = response.data;
+    if(this.resolutions.length > 0) {
+      this.selectedResolution = this.resolutions[0];
+      if(this.premier) {
+        EventBus.$emit('resolution', JSON.stringify(value));
+      }
+      else {
+        EventBus.$emit('resolution2', JSON.stringify(value));
+      }	  
+    } 
   },
+  
   handleError: function(response) {
-  		console.log("Aeris-Eccad-Scenario - Error while accessing server:"); 
+  		console.log("Aeris-Eccad-Resolution - Error while accessing server:"); 
         var error = response.status;
         var message = response.statusText;
         if(!error) message = 'Can\'t connect to the server';
         console.log('Error ' + error + ': ' + message);
- },
- capitalizeFirstLetter: function(string) {
+  },
+  capitalizeFirstLetter: function(string) {
     return string.charAt(0).toUpperCase() + string.slice(1);
- }
+  }
     
   }
 }
@@ -134,17 +132,19 @@ export default {
 
 <style>
 
-.aeris-eccad-scenario-label {
+.aeris-eccad-resolution-label {
     font-weight: normal;
     color: navy;
     width: 78px;
+    min-width: 78px;
+    max-width: 78px;
     display: inline-block;
 }
-.aeris-eccad-scenario-list {
+.aeris-eccad-resolution-list {
     display: inline-block;
 }
 
-.aeris-eccad-scenario-list > select {
+.aeris-eccad-resolution-list > select {
    width: 138px;
 }
 	

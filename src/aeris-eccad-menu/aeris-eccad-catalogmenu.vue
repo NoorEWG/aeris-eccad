@@ -44,8 +44,10 @@ export default {
       {url: '', text: 'Sectors', menu: 'catalog'},
       {url: '', text: 'Scenarios', menu: 'catalog'},
       {url: '', text: 'Temporal', menu: 'catalog'},
-      {url: '', text: 'Dashboard', menu: 'catalog'},
-      {url: '', text: 'Metadata', menu: 'catalog'}
+      {url: '', text: 'Emission Time Series', menu: 'catalog'},
+      {url: '', text: 'Inventory Time Series', menu: 'catalog'},
+      {url: '', text: 'Metadata', menu: 'catalog'},
+      {url: '', text: 'Data search', menu: 'catalog'}
     ]
   },
   
@@ -55,7 +57,7 @@ export default {
   methods: {
     
     change: function(link) {
-      console.log("catalogmenu: " + JSON.stringify(link));
+      // console.log("catalogmenu: " + JSON.stringify(link));
       EventBus.$emit('catalogmenu', JSON.stringify(link));
     }
   }

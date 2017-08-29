@@ -16,7 +16,7 @@
             <div v-if="showCategories">
                 <span v-bind:key="catgroup.id" v-for="catgroup in categoryGroups">
                     <label class="spacedradiobutton categoryGroupButtons" :class="{color: catgroup.color}">
-                        <input type="radio" name="categoryGroup" :value="catgroup.id" v-model="categoryGroup" data-ng-click="changeCategoryGroup(categoryGroup)" />{{catgroup.name}}
+                        <input type="radio" name="categoryGroup" :value="catgroup.id" v-model="categoryGroupId" @click="changeCategoryGroup()" />{{catgroup.name}}
                     </label>
                 </span>
             </div>
@@ -39,8 +39,11 @@ export default {
     return {
       links: [],
       categoryGroups: [],  
+      categoryGroupId: 1,
+      categoryGroup: {},
       showCategories : false,
-      selectedLink: {}    
+      selectedLink: {},
+      hideheader: false    
     }
   },
   
@@ -72,6 +75,7 @@ export default {
       {url: '', text: 'Online-Tools', menu: 'tools'},
       {url: '', text: 'Help', menu: 'help'}
     ];
+    this.selectedLink = this.links[0];
     //EventBus.$on('mainmenu', data => {
     //    this.selectedLink = JSON.parse(data)
 	//});
@@ -94,7 +98,23 @@ export default {
     
     change: function(menu) {
         EventBus.$emit('mainmenu', JSON.stringify(menu))
-    }
+        if(menu === 'catalog') {
+           this.showCategories = true;
+        }
+        else {
+            this.showCategories = false;
+        }
+
+    },
+
+    changeCategoryGroup: function() {
+      EventBus.$emit('categorygroup', JSON.stringify(this.categoryGroup));
+    },
+
+    hideHeader: function(bool) {
+        this.hideheader = bool;
+        EventBus.$emit('hideMainHeader', JSON.stringify(bool));
+    }  
   }
 }
 </script>

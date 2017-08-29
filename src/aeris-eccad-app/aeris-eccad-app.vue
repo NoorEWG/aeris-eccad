@@ -26,14 +26,18 @@
     </div> 
   
     <div v-show="catalogMenu && catalogLink.text === 'Inventories'">
-      <aeris-eccad-catalog service="http://eccad.aeris-data.fr/eccad2web/rest/dataset/inventorydatasets?catgroup=emissions"></aeris-eccad-catalog>
+      <aeris-eccad-catalog service="http://eccad.aeris-data.fr/eccad2web/rest/dataset/inventorydatasets?catgroup="></aeris-eccad-catalog>
     </div>
 
-    <div v-show="catalogMenu && catalogLink.text === 'Dashboard'">	 	
+    <div v-show="catalogMenu && catalogLink.text === 'Metadata'">	 	
+      <aeris-eccad-metadata></aeris-eccad-metadata>
+    </div>
+    
+    <div v-show="catalogMenu && catalogLink.text === 'Data search'">	 	
       <aeris-eccad-dashboard></aeris-eccad-dashboard>
     </div>
 
-    <div v-show="toolsMenu && toolsLink.text === 'Map'">
+    <div v-show="toolsMenu && toolsLink.text === 'Map'" class="minToolsHeight">
       <aeris-eccad-map service="http://thredds.sedoo.fr/thredds/wms/eccad/" name="map1"></aeris-eccad-map> 	
       <aeris-eccad-map service="http://thredds.sedoo.fr/thredds/wms/eccad/" first="false" name="map2"></aeris-eccad-map> 	  
     </div>
@@ -48,8 +52,16 @@
       <aeris-eccad-map service="http://thredds.sedoo.fr/thredds/wms/eccad/" first="false" name="compare" compare="true"></aeris-eccad-map> 	  
     </div>
 
-    <div v-show="toolsMenu && toolsLink.text ==='Timeseries Analysis'">
+    <div v-show="toolsMenu && toolsLink.text === 'Timeseries Analysis'">
       <aeris-eccad-barchart service="http://eccad.aeris-data.fr/eccad2web/rest/dataanalysis/barchart"></aeris-eccad-barchart>
+    </div>
+
+    <div v-show="toolsMenu && toolsLink.text === 'Scatterplot'">
+      <aeris-eccad-scatterplot></aeris-eccad-scatterplot>
+    </div>
+
+    <div v-show="toolsMenu && toolsLink.text === 'Download'">
+      <aeris-eccad-download></aeris-eccad-download>
     </div>
 
   </span> 
@@ -113,15 +125,12 @@ export default {
   created: function () {
     console.log("Aeris Eccad App - Creating");
     EventBus.$on('mainmenu', data => {
-			console.log("main menu changed!");
       this.mainMenu = JSON.parse(data);
 		});
     EventBus.$on('catalogmenu', data => {
-			console.log("aeris eccad app: catalogmenu: " + JSON.stringify(data));
       this.catalogLink = JSON.parse(data);
 		});
     EventBus.$on('toolsmenu', data => {
-			console.log("aeris eccad app: toolsmenu: " + JSON.stringify(data));
       this.toolsLink = JSON.parse(data);
 		});		        
   },
@@ -135,4 +144,7 @@ export default {
 </script>
 
 <style>
+   .minToolsHeight {
+     min-height: 500px;
+   }
 </style>

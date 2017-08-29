@@ -8,47 +8,47 @@ in
 	  <div class="inventoriesHeader">
         <div class="inventoryItemSm"> 
             <span>Title &nbsp;</span>
-            <span class="fa fa-caret-down" v-on="orderByTitleAsc()">&nbsp;</span>
-            <span class="fa fa-caret-up" v-on="orderByTitleDesc()">&nbsp;</span>
+            <span class="fa fa-caret-down" @click="orderByTitleAsc()">&nbsp;</span>
+            <span class="fa fa-caret-up" @click="orderByTitleDesc()">&nbsp;</span>
         </div>
         <div class="inventoryItemSm">
             <span>Categories &nbsp;</span> 
-            <span class="fa fa-caret-down" v-on="orderByCategoriesAsc()">&nbsp;</span>
-            <span class="fa fa-caret-up" v-on="orderByCategoriesDesc()">&nbsp;</span>
+            <span class="fa fa-caret-down" @click="orderByCategoriesAsc()">&nbsp;</span>
+            <span class="fa fa-caret-up" @click="orderByCategoriesDesc()">&nbsp;</span>
         </div>
         <div class="inventoryItemSm">
             <span>Temporal coverage &nbsp;</span> 
-            <span class="fa fa-caret-down" v-on="orderByTemporalCoverageAsc()">&nbsp;</span>
-            <span class="fa fa-caret-up" v-on="orderByTemporalCoverageDesc()">&nbsp;</span>
+            <span class="fa fa-caret-down" @click="orderByTemporalCoverageAsc()">&nbsp;</span>
+            <span class="fa fa-caret-up" @click="orderByTemporalCoverageDesc()">&nbsp;</span>
         </div>
         <div class="inventoryItemSm">
             <span> Time resolution &nbsp;</span> 
-            <span class="fa fa-caret-down" v-on="orderByTimeResolutionAsc()">&nbsp;</span>
-            <span class="fa fa-caret-up" v-on="orderByTimeResolutionDesc()">&nbsp;</span>
+            <span class="fa fa-caret-down" @click="orderByTimeResolutionAsc()">&nbsp;</span>
+            <span class="fa fa-caret-up" @click="orderByTimeResolutionDesc()">&nbsp;</span>
         </div>
         <div class="inventoryItemSm">
             <span> Grid size &nbsp;</span> 
-            <span class="fa fa-caret-down" v-on="orderByGridSizeAsc()">&nbsp;</span>
-            <span class="fa fa-caret-up" v-on="orderByGridSizeDesc()">&nbsp;</span>
+            <span class="fa fa-caret-down" @click="orderByGridSizeAsc()">&nbsp;</span>
+            <span class="fa fa-caret-up" @click="orderByGridSizeDesc()">&nbsp;</span>
             </div>
         <div class="inventoryItemM">
             <span>Provider(s) &nbsp;</span>
-            <span class="fa fa-caret-down">&nbsp;</span>
-            <span class="fa fa-caret-up">&nbsp;</span>
+            <span class="fa fa-caret-down" @click="orderByProviderAsc()">&nbsp;</span>
+            <span class="fa fa-caret-up" @click="orderByProviderDesc()">&nbsp;</span>
         </div>
     </div>
     
     <div>
         <div class="inventoriesColumn">
             <!--div class="inventories" data-ng-repeat="i in invCats | filter: { catgroupId : categoryGroupId } | orderBy : inventoryOrder"-->
-            <div class="inventories" v-for="i in invCats">
+            <div class="inventories" v-for="i in filteredAndOrderedCatalog">
                 <div class="inventoryItemSm">
-                    <div><a href="metadata({name: i.name, inventory : i.id})">{{i.name}}</a></div>
+                    <div><a @click="metadata(i)">{{i.name}}</a></div>
                     <div>{{i.geospatial}} - {{i.publication}}</div>
                 </div>
                 <div  class="inventoryItemSm">
                     <div v-for="c in i.catparam">
-                        <a href="#" v-on:click="openModal(c.parameters)" :style="{'color' : c.color}" data-toggle="tooltip" :title="c.parameters.length">{{c.name}}</a>
+                        <a href="#" @click="openModal(c.parameters)" :style="{'color' : c.color}" data-toggle="tooltip" :title="c.parameters.length">{{c.name}}</a>
                     </div>    
                 </div>
                 <div  class="inventoryItemSm">
@@ -89,24 +89,43 @@ export default {
   data () {
     return {
         catalogService: this.service,
-        invCats: {type: Array},
+        invCats: [],
+        selectedInvCats: [],
+        categoryGroups: {type: Array},
+        selectedCatGroupId: -1,
         inventoryParameters: {type: Array},
         inventoryOrder: "order"
     }
   },
   
+  computed: { 
+    
+    filteredAndOrderedCatalog: function() {
+        // Apply filter first
+        let result = this.invCats;
+        if (this.selectedCatGroup) {
+            result = result.filter(item => item.id === this.selectedCatGroup.id);
+        }
+        return _.orderBy(result, this.inventoryOrder);
+    },
+  },
+  
   watch: {
-    service (value) {
-	      this.catalogService = value
-	      this.refresh();
-    }, 
+    selectedCatGroup (value) {
+        // Apply filter first
+        let result = this.invCats;
+        console.log("selectedCatGroup:" + value)
+        if (value) {
+            result = result.filter(item => item.id === value.id);
+        }
+        this.selectedInvCats = _.orderBy(result, this.inventoryOrder);
+    }
   },
   
   mounted: function () {
-   this.refresh(); 
   },
   
-   updated: function() {
+  updated: function() {
   },
   
   destroyed: function() {
@@ -114,30 +133,34 @@ export default {
   
   created: function () {
   	console.log("Aeris Eccad Catalog - Creating");
-  	this.invCats = [];
+  	EventBus.$on('catGroups', data => {
+      this.categoryGroups = JSON.parse(data);
+	  var tmp = this.categoryGroups;
+      for(var i = 0; i < tmp.length ; i++) {
+         this.refresh(tmp[i].name); 
+      }   
+    });
+    EventBus.$on('categorygroup', data => {
+      this.selectedCatGroup = JSON.parse(data); 
+      console.log("selected cat group: " + JSON.stringify(this.selectedCatGroup))
+    });
   },
  
-  computed: {
-  },
-  
   methods: {
   
-  refresh: function() {
-  	   if (this.catalogService) {
-  	   var url = this.catalogService ;
-  	   console.log(url);
-   	   this.$http.get(this.catalogService).then((response)=>{this.handleSuccess(response)},(response)=>{this.handleError(response)});
-   	   }
+  refresh: function(catgroupname) {
+    this.$http.get(this.catalogService + catgroupname).then((response)=>{this.handleSuccess(response)},(response)=>{this.handleError(response)});
    },
       
   handleSuccess : function(response) {
   
     var tmpInvCats = response.data;
-    this.invCats = [];
-    // console.log(JSON.stringify(response.data));
     var categoryGroupName = response.data.nameCategoryGroup;
-    // TODO:  var categoryGroupId = response.data.idCategoryGroup;
-	var tmp = [];
+    var categoryGroupId = 1;
+    if(categoryGroupName !== 'emissions') {
+      categoryGroupId = 2;
+    }
+   	var tmp = [];
 	
 	tmpInvCats.forEach(function(item) {
 
@@ -146,12 +169,10 @@ export default {
 		var inventory = {};
 		
 		tmp.push(inventory);
-		
-		
-		
+				
 		inventory.inventoryGroupId = item.idInventoryGroup;
 		inventory.catgroupName = categoryGroupName;
-		// inventory.catgroupId = categoryGroupid;
+		inventory.catgroupId = categoryGroupId;
 		inventory.publication = item.publication;
 		inventory.name = item.nameInventoryGroup;
 		inventory.temporalCoverage = [];
@@ -207,12 +228,21 @@ export default {
 				intcov.push(catparam.temporalCoverage);
 			}
 			inventory.temporalCoverage = intcov;
-				// });
-			//});
 		});
 		
 	});
-	this.invCats = tmp;
+	if(this.invCats.length <= 0) {
+      this.invCats = tmp;
+    }
+    else {
+      var aux = this.invCats;
+      tmp.forEach( function(ic) {
+        aux.push(ic);
+      });
+      this.invCats = aux;  
+      this.selectedInvCats = aux;
+    }
+
     EventBus.$emit('invCats', tmp);
   },
   
@@ -222,8 +252,18 @@ export default {
         var message = response.statusText;
         if(!error) message = 'Can\'t connect to the server';
         console.log('Error ' + error + ': ' + message);
- },
-   
+   },
+
+    metadata: function(inventory) {
+      var metadata = {
+        id: inventory.id,
+        name: inventory.name
+      }
+      EventBus.$emit('metadata', JSON.stringify(metadata));  
+      // change to the metadatatab
+      EventBus.$emit('catalogmenu', JSON.stringify({url: '', text: 'Metadata', menu: 'catalog'}));
+    },
+
     orderByTitleAsc: function () {
          this.inventoryOrder = "name";
     },
@@ -265,11 +305,11 @@ export default {
     },
 
     orderByProviderAsc: function () {
-        // TODO
+        // this.inventoryOrder = "logo";
     },
 
     orderByProviderDesc: function () {
-       // TODO
+        // this.inventoryOrder = "-logo";
     },
         
     openModal: function (parameters) {

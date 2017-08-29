@@ -3,39 +3,38 @@
 */
 
 <template>
-  <!--div v-if="!hideHeader" class="headerFlex"-->
-  <div class="headerFlex">
-    <div class="logoWidth"><img class="img img-responsive" :src="logoLink" alt="eccad logo"/></div>
-    <div class="titleWidth">
-      <div class="eccadHeaderTitle titledecoration">ECCAD: Emissions of atmospheric Compounds and Compilation of Ancillary Data</div>
-      <div class="eccadHeaderSubtitle">Making data accessible and providing tools for data analysis</div> 
-    </div>
-    <div class="authWidth">
-      <a class="signIn" href="login" v-if="auth.auth == false">
-        <div class="userIcon">
-          <i class="fa fa-2x fa-user" aria-hidden="true"></i>
-         </div>
-         <div>{{auth.text}}</div>
-      </a> 
-      <span v-if="auth.auth == true">
-        <button class="signIn" v-on="logout()"> 
+  <div v-if="!hideHeader" class="headerFlex">
+      <div class="logoWidth"><img class="img img-responsive" :src="logoLink" alt="eccad logo"/></div>
+      <div class="titleWidth">
+        <div class="eccadHeaderTitle titledecoration">ECCAD: Emissions of atmospheric Compounds and Compilation of Ancillary Data</div>
+        <div class="eccadHeaderSubtitle">Making data accessible and providing tools for data analysis</div> 
+      </div>
+      <div class="authWidth">
+        <a class="signIn" href="login" v-if="auth.auth == false">
           <div class="userIcon">
             <i class="fa fa-2x fa-user" aria-hidden="true"></i>
-          </div>
-          <div>{{auth.text}}</div>
-        </button>
-        <div class="signIn">{{auth.person.firstNamePerson}}</div>
-      </span>  
-    </div>
+           </div>
+           <div>{{auth.text}}</div>
+        </a> 
+        <span v-if="auth.auth == true">
+          <button class="signIn" v-on="logout()"> 
+            <div class="userIcon">
+              <i class="fa fa-2x fa-user" aria-hidden="true"></i>
+            </div>
+            <div>{{auth.text}}</div>
+          </button>
+          <div class="signIn">{{auth.person.firstNamePerson}}</div>
+        </span>  
+      </div>
     
-   <!--div>
+     <!--div>
      logoutModal {{logoutModal}}
       <div v-if="logoutModal">
         <input type=submit class="btn btn-sm" value="Sign out" data-ng-click="confirmLogout()"/>
         <input type=submit class="btn btn-sm" value="Back" data-ng-click="noLogout()"/>
       </div>
-    </div-->  
-  </div>	
+    </div-->
+  </div>  	
 </template>
 
 <script>
@@ -76,6 +75,11 @@ export default {
   
   created: function () {
     console.log("Aeris Eccad Header - Creating");
+    EventBus.$on('hideMainHeader', data => {
+	console.log(data);        
+	this.hideHeader = JSON.parse(data)
+	console.log(JSON.stringify(this.hideHeader))
+    });
     this.getCategoryGroups();
     this.getSectors();
     this.getScenarios();

@@ -16,14 +16,14 @@
             <!--div data-ng-show="currentUrl.includes('catalog')">
                 <span data-ng-repeat="catgroup in categoryGroups">
                     <label class="spacedradiobutton categoryGroupButtons" data-ng-style="{color: catgroup.color};">
-                        <input type="radio" name="categoryGroup" value="{{catgroup.id}}" data-ng-model="categoryGroup" data-ng-click="changeCategoryGroup(categoryGroup)" />{{catgroup.name}}
+                        <input type="radio" name="categoryGroup" :value="catgroup.id" v-model="categoryGroup" @click="changeCategoryGroup(categoryGroup)" />{{catgroup.name}}
                     </label>
                 </span>
     
             </div-->
             <div class="hideShow">
-                <a data-ng-if="!hideheader"><img src="images/hide.png" alt="hide" data-ng-click="hideHeader(true)" /></a>
-                <a data-ng-if="hideheader"><img src="images/show.png" alt="show" data-ng-click="hideHeader(false)" /></a>
+                <a v-show="!hideheader"><img src="images/hide.png" alt="hide" @click="hideHeader(true)" /></a>
+                <a v-show="hideheader"><img src="images/show.png" alt="show" @click="hideHeader(false)" /></a>
             </div>
         </div>
     </div>    
@@ -38,7 +38,8 @@ export default {
   
   data () {
     return {
-      links: []    
+      links: [],
+      hideheader: false    
     }
   },
   
@@ -73,7 +74,12 @@ export default {
     
     change: function(link) {
         EventBus.$emit('toolsmenu', JSON.stringify(link));
-    }
+    },
+
+    hideHeader: function(bool) {
+        this.hideheader = bool;
+        EventBus.$emit('hideSelectionBar', JSON.stringify(bool));
+    } 
   }
 }
 </script>

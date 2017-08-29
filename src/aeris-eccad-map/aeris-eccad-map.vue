@@ -1,6 +1,7 @@
 <template>
   <span>	  
-    <div :id="name"></div>
+    <div class="mapTitleHeader">{{dataset.titre}} {{resolution.fullNameResolution}} {{datatype.shortName}} {{parameter.shortName}} {{scenario.displayNameScenario}} - {{mapParams.time}}</div> 
+	<div :id="name" ref="map"></div>
   </span>
 </template>
 
@@ -36,15 +37,17 @@ export default {
     return {
        mapService: this.service,
        grids: [],
-	   mapParameters: {},
+	   mapParams: {},
 	   regionParameters: {},
 	   useMask: false,
 	   maskPrefix: '',
        parameter: {},
+	   datatype: {},
        dataset: {},
        sector: {},
        sectorname: String,
        scenario: {},
+	   resolution: {},
        unit: {},
        file: {},
        beginDate: {},
@@ -59,10 +62,9 @@ export default {
   
    watch: {
     service (value) {
-	      this.mapService = value
+	  this.mapService = value
     },
 	mainmenu (value) {
-	  console.log("main menu changed: " + JSON.stringify(this.mainmenu))
 	  if(this.mainmenu === 'tools') {
 		this.visible = true
 	  }
@@ -71,20 +73,16 @@ export default {
 	  }
     },
     file (value) {
-    	console.log("in map, file changed: " + JSON.stringify(value));
-        this.getGrids();
+      this.getGrids();
     },
     sector (value) {
-        console.log("in map, sector changed: " + JSON.stringify(value));
-    	this.getGrids();
+      this.getGrids();
     },
     sectorname (value) {
-        console.log("in map, sectorname changed: " + JSON.stringify(value));
-    	this.getGrids();
+      this.getGrids();
     },
     parameter (value) {
-        console.log("in map, parameter changed: " + JSON.stringify(value));
-    	this.getGrids();
+      this.getGrids();
     },    
   },
   computed: {  
@@ -105,34 +103,43 @@ export default {
 		});
 
     if(this.first && !this.compare) {
-       EventBus.$on('dataset', data => {
-		   this.dataset = JSON.parse(data);
+      	EventBus.$on('dataset', data => {
+	    	this.dataset = JSON.parse(data);
+	  	});
+		EventBus.$on('datatype', data => {
+			this.datatype = JSON.parse(data);
 		});
 		EventBus.$on('parameter', data => {
-		   this.parameter = JSON.parse(data);
+			this.parameter = JSON.parse(data);
 		});
 		EventBus.$on('sector', data => {
-		   this.sector = JSON.parse(data);
+			this.sector = JSON.parse(data);
 		});
 		EventBus.$on('sectorname', data => {
-		   this.sectorname = data;
+			this.sectorname = data;
 		});
 		EventBus.$on('scenario', data => {
-		   this.scenario = JSON.parse(data);
+			this.scenario = JSON.parse(data);
 		});
 		EventBus.$on('unit', data => {
-		   this.unit = JSON.parse(data);
+			this.unit = JSON.parse(data);
 		});
 		EventBus.$on('file', data => {
-		   this.file = JSON.parse(data);
+			this.file = JSON.parse(data);
 		});
-        EventBus.$on('beginDate', data => {
-		   this.beginDate = JSON.parse(data);
+		EventBus.$on('resolution', data => {
+	    	this.resolution = JSON.parse(data);
+	  	});
+		EventBus.$on('beginDate', data => {
+			this.beginDate = JSON.parse(data);
 		});
     }
     else if (!this.first && !this.compare) {
      	EventBus.$on('dataset2', data => {
 		   this.dataset = JSON.parse(data);
+		});
+		EventBus.$on('datatype2', data => {
+		   this.datatype2 = JSON.parse(data);
 		});
 		EventBus.$on('parameter2', data => {
 		   this.parameter = JSON.parse(data);
@@ -152,7 +159,10 @@ export default {
 		EventBus.$on('file2', data => {
 		   this.file = JSON.parse(data);
 		});
-        EventBus.$on('beginDate', data => {
+		EventBus.$on('resolution2', data => {
+	    	this.resolution = JSON.parse(data);
+	  	});
+        EventBus.$on('beginDate2', data => {
 		   this.beginDate = JSON.parse(data);
 		});
     }
@@ -208,7 +218,7 @@ export default {
             if(this.first) {
             EventBus.$emit('beginDates', JSON.stringify(beginDates));
             EventBus.$emit('endDates', JSON.stringify(beginDates));
-            EventBus.$emit('mapParams', JSON.stringify(beginDates));
+            EventBus.$emit('mapParams', JSON.stringify(this.mapParams));
 			EventBus.$emit('min', JSON.stringify(min));
 			EventBus.$emit('max', JSON.stringify(max));
           }
@@ -229,36 +239,6 @@ export default {
          return value;
     },  
   
-    /* refresh: function() {
-      
-      // color range and logscale: todo  
-      if (this.mapService && this.sectorname && this.file && this.file[0].name && this.beginDate) {	    
-  	    var fileName = this.file[0].name;
-  	    console.log(fileName);  
-
-        var colorScaleRange = this.beginDate.min + " " + this.beginDate.max;
-
-        var params = {
-            'FORMAT' : 'image/png',
-            'TRANSPARENT' : false,
-            'LAYERS' : this.sectorname,
-            'TIME' :  this.mapParams.beginDate+ 'T00%3A00%3A00.000Z',
-            'COLORSCALERANGE' : this.mapParams.colorScaleRange,
-            'LOGSCALE' : this.logScale,
-            'BGCOLOR' : '0xFFFFFF',
-            'BELOWMINCOLOR' : '0xFFFFFF',
-            'ABOVEMAXCOLOR' : 'extend',
-            'NUMCOLORBANDS' : this.numColors,
-            'STYLES' : 'boxfill/'+ this.color,
-            'VERSION' : '1.1.1'
-        }
-
-
-  	    var url = this.barchartService  + "?filename=" + fileName + "&sector=" + this.sectorname + "&type=" + this.cType;
-	    this.$http.get(url).then((response)=>{this.handleSuccess(response)},(response)=>{this.handleError(response)}); 	   																																																																																																																																																																																																											}
-      }
-  }, */
-
     setMask: function(mask) {
 	  if(mask && mask.length > 0) {
         this.useMask = true;
@@ -273,19 +253,15 @@ export default {
     draw: function() {
 	 
 	  // remove all existing childs from div
-	  var idMap = "#" + this.name;
-	  var el = this.$el.querySelector(idMap);
-
+	  var el = this.$refs.map;
 	  while (el.firstChild) {
-         el.removeChild(el.firstChild);
+        el.removeChild(el.firstChild);
       }
 
 	    // color range and logscale: todo  
       if (this.mapService && this.sectorname && this.file && this.file[0].name && this.beginDate) {	    
   	    var fileName = this.file[0].name;
-  	    console.log(fileName);  
-        console.log(JSON.stringify(this.beginDate))  
-        var params = {
+  	    var params = {
              'FORMAT' : 'image/png',
             'TRANSPARENT' : false,
             'LAYERS' : this.sectorname,
@@ -301,7 +277,7 @@ export default {
         }
  
         if(params.isRegion) {
-		
+		  // TODO 
 		}
 	    // world boundaries
 		var worldBoundaries = new ol.source.TileWMS({
@@ -368,7 +344,7 @@ export default {
             
             
             // if(this.mapParams.colorScaleRange.toUpperCase().includes("E308")) {
-	            console.log("thredds url: " + this.mapService + totalDir + mask +  fileName);
+	            // console.log("thredds url: " + this.mapService + totalDir + mask +  fileName);
                 var eccadSource = new ol.source.TileWMS({
 	                    url: this.mapService + totalDir + mask +  fileName,
 	                    params: params

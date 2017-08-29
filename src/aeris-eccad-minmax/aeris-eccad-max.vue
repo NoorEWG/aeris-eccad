@@ -33,11 +33,11 @@ export default {
   
   watch: {
     max (value) {
-      if(manual) {
-        if(compare)
+      if(this.manual) {
+        if(this.compare)
           EventBus.$emit('manualMaxCompare', JSON.stringify(value));
         else {
-          if(first) {
+          if(this.first) {
             EventBus.$emit('manualMax', JSON.stringify(value));
         
           } else {

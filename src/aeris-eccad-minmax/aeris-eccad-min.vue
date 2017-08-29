@@ -33,11 +33,11 @@ export default {
   
   watch: {
     min (value) {
-      if(manual) {
-        if(compare)
+      if(this.manual) {
+        if(this.compare)
           EventBus.$emit('manualMinCompare', JSON.stringify(value));
         else {
-          if(first) {
+          if(this.first) {
             EventBus.$emit('manualMin', JSON.stringify(value));
         
           } else {
@@ -60,7 +60,7 @@ export default {
   mounted: function () {
   },
   
-   updated: function() {
+  updated: function() {
   },
   
   destroyed: function() { 

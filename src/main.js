@@ -42,7 +42,9 @@ import AerisEccadMax from './aeris-eccad-minmax/aeris-eccad-max.vue'
 import AerisEccadResetCompare from './aeris-eccad-button/aeris-eccad-reset/aeris-eccad-compare.vue'
 import AerisEccadCompareBox from './aeris-eccad-comparebox/aeris-eccad-comparebox.vue'
 import AerisEccadDrawButtons from './aeris-eccad-button/aeris-eccad-draw/aeris-eccad-draw.vue'
-
+import AerisEccadDownload from './aeris-eccad-download/aeris-eccad-download.vue'
+import AerisEccadResolution from './aeris-eccad-listbox/aeris-eccad-resolution/aeris-eccad-resolution.vue'
+import AerisEccadMetadata from './aeris-eccad-metadata/aeris-eccad-metadata.vue'
 
 import AerisEccadSelection from './aeris-eccad-selection/aeris-eccad-selection.vue'
 import AerisEccadApp from './aeris-eccad-app/aeris-eccad-app.vue'
@@ -75,7 +77,9 @@ Vue.customElement('aeris-eccad-max',AerisEccadMax);
 Vue.customElement('aeris-eccad-reset-compare',AerisEccadResetCompare);
 Vue.customElement('aeris-eccad-comparebox',AerisEccadCompareBox);
 Vue.customElement('aeris-eccad-drawbuttons',AerisEccadDrawButtons);
-
+Vue.customElement('aeris-eccad-download',AerisEccadDownload);
+Vue.customElement('aeris-eccad-resolution',AerisEccadResolution);
+Vue.customElement('aeris-eccad-metadata',AerisEccadMetadata);
 
 Vue.customElement('aeris-eccad-selection',AerisEccadSelection);
 Vue.customElement('aeris-eccad-app',AerisEccadApp);

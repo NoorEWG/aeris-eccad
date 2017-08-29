@@ -108,8 +108,7 @@ export default {
   methods: {
   
   refresh: function() {
-  	   console.log("rb unit in refresh");
-  	   if (this.unitService && this.dataset && this.dataset.id && this.category && this.category.id ) {
+  	   if (this.unitService && this.dataset && this.dataset.id && this.dataset.id > 0 && this.category && this.category.id && this.category.id > 0) {
 	  	   var url = this.unitService  + "/" + this.dataset.id + "/" + this.category.id;
 	  	   console.log(url);
 	   	   this.$http.get(url).then((response)=>{this.handleSuccess(response)},(response)=>{this.handleError(response)});
