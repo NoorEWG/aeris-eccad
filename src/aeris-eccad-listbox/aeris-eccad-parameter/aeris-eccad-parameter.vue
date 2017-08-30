@@ -27,13 +27,18 @@ export default {
     first: {
       type: Boolean,
       default: true
+    },
+    ets: {
+      type: Boolean,
+      default: false
     }
   },
   
   data () {
     return {
-        parameterService: this.service,
-        premier: this.first,
+      parameterService: this.service,
+      premier: this.first,
+      emissionts: this.ets,
     	parameters: {type: Array},
     	selectedParameter: {type: Object},
     	category: {type: Object}
@@ -50,11 +55,14 @@ export default {
     	this.refresh();
     },
     selectedParameter (value) {
-      if(this.premier) {
+      if(this.premier && !this.ets) {
         EventBus.$emit('parameter', JSON.stringify(value));
       }
-      else {
+      if (!this.premier) {
         EventBus.$emit('parameter2', JSON.stringify(value));
+      }	
+      if (this.emissionts) {
+        EventBus.$emit('etParameter', JSON.stringify(value));
       }	  
     }
   },
@@ -77,18 +85,30 @@ export default {
   
   created: function () {
     console.log("Aeris Eccad Parameter - Creating");
-    if(this.premier) {
-	    EventBus.$on('category', data => {
-		   this.category = JSON.parse(data);
-		   console.log("category is: " + JSON.stringify(this.category));
-		});
-	} 
-	else {
-		 EventBus.$on('category2', data => {
-		   this.category = JSON.parse(data);
-		   console.log("category2 is: " + JSON.stringify(this.category2));
+    
+    EventBus.$on('category', data => {
+      var category = JSON.parse(data)
+      if(this.premier && !this.ets && category.id > 0) {
+        this.category = category;
+        console.log("category is: " + JSON.stringify(this.category));
+      }
+    });
+	  
+    EventBus.$on('category2', data => {
+      var category = JSON.parse(data)
+      if(!this.premier && category.id > 0) {
+        this.category = category;
+        console.log("category2 is: " + JSON.stringify(this.category));
+      }
+    });	
+   
+		EventBus.$on('etCategory', data => {
+		  var category = JSON.parse(data)
+      if(this.emissionts && category.id > 0) {
+        this.category = category;
+		    console.log("etCategory is: " + JSON.stringify(this.category));
+      }
 		});	
-	}
   },
   
  

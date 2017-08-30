@@ -232,6 +232,9 @@ export default {
           this.draw();          
         });
       } 
+	  else {
+		  this.draw();
+	  }
     },  
 
     correctedMin: function(value) {
@@ -356,12 +359,22 @@ export default {
             // }
                 
 		
+        if(this.sectorname && this.file && this.file[0].name && this.beginDate) {
+			var overlayGroup = new ol.layer.Group({
+				title: 'Layers',
+				// layers: [eccadLayer, wbLayer]
+				layers: [eccadLayer]
+			});	
+		}
 
-        var overlayGroup = new ol.layer.Group({
-		    title: 'Layers',
-		    // layers: [eccadLayer, wbLayer]
-			layers: [eccadLayer]
-		});		
+		else {
+			var overlayGroup = new ol.layer.Group({
+				title: 'Layers',
+				// layers: [eccadLayer, wbLayer]
+				layers: [vmapLayer]
+			});	
+		}
+
 		 var map = new ol.Map({
                     target: this.name,
                     controls: ol.control.defaults().extend([

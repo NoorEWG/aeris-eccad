@@ -109,7 +109,7 @@ export default {
   methods: {
   
   refresh: function() {
-  	   if (this.sectorService && this.dataset && this.dataset.id) {
+  	   if (this.sectorService && this.dataset && this.dataset.id && this.dataset.id > 0) {
 	  	   var url = this.sectorService  + "/sectors/" + this.dataset.id;
 	   	   this.$http.get(url).then((response)=>{this.handleSuccess(response)},(response)=>{this.handleError(response)});
    	   }

@@ -142,7 +142,6 @@ export default {
     });
     EventBus.$on('categorygroup', data => {
       this.selectedCatGroup = JSON.parse(data); 
-      console.log("selected cat group: " + JSON.stringify(this.selectedCatGroup))
     });
   },
  
@@ -242,8 +241,7 @@ export default {
       this.invCats = aux;  
       this.selectedInvCats = aux;
     }
-
-    EventBus.$emit('invCats', tmp);
+    EventBus.$emit('invCats', JSON.stringify(aux));
   },
   
   handleError: function(response) {
@@ -331,16 +329,4 @@ export default {
 </script>
 
 <style>
-
-.aeris-eccad-category-label {
-    font-weight: normal;
-    color: navy;
-    width: 78px;
-    display: inline-block;
-}
-.aeris-eccad-category-list {
-    width: 140px;
-    display: inline-block;
-}
-	
 </style>

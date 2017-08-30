@@ -3,7 +3,7 @@
 */
 
 <template>
-  <div class="selectionFlex">
+  <div class="selectionFlex" v-show="!hideSelectionBar">
       <div class="selectionColumn">
         <div class="selectionRow"> 
           <div class="selectItem">
@@ -27,6 +27,11 @@
           </div>
           <div class="selectItem">
             <aeris-eccad-date></aeris-eccad-date>
+          </div>
+        </div>
+        <div class="selectionRow"> 
+          <div class="selectItem">
+            <aeris-eccad-resolution :service="resolutionService"></aeris-eccad-resolution>
           </div>
         </div>
   
@@ -54,6 +59,11 @@
           </div>
           <div class="selectItem">
             <aeris-eccad-date first="false"></aeris-eccad-date>
+          </div>
+        </div>
+        <div class="selectionRow"> 
+          <div class="selectItem">
+            <aeris-eccad-resolution :service="resolutionService" first="false"></aeris-eccad-resolution>
           </div>
         </div>
       </div>
@@ -134,6 +144,7 @@ export default {
   
   data () {
     return {
+      hideSelectionBar : false,
       categoryService: this.service + 'data/categories',
       parameterService: this.service + 'data/parameters',
       scenarioService: this.service + 'data/scenarios',
@@ -142,7 +153,8 @@ export default {
       unitService: this.service + 'data/totalunit',
       maskService: this.service + 'dataanalysis/masks',
       colorService: this.service + 'data/colors',
-      geospatialService: this.service + 'data/geospatial'
+      geospatialService: this.service + 'data/geospatial',
+      resolutionService: this.service + 'dataanalysis/resolutions'
     }
   },
   
@@ -160,7 +172,9 @@ export default {
   
   created: function () {
     console.log("Aeris Eccad Selection Bar - Creating");
-    
+    EventBus.$on('hideSelectionBar', data => {
+      this.hideSelectionBar = JSON.parse(data); 
+    });
   },
   
   computed: {

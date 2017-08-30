@@ -42,8 +42,8 @@
             <div class="metadataFlex">             
                 <div v-for="cat in meta.categories" :class="(meta.categories.length == 1 || meta.categories.length == 2) ? 'metadataList50' : (meta.categories.length == 3) ? 'metadataList30' : 'metadataList20'">
                     <div>
-                        <a class="metadataLink" @click="hideShowSpecies($index)" :style="{color : cat.color}"  data-toggle="tooltip" title="click to get more information">{{cat.name}} - {{cat.parametresDTO.length}} parameters</a>
-                        <div ref="sp-{{$index }}" class="hideMetadataList">
+                        <a class="metadataLink" @click="hideShowSpecies(cat.paramref)" :style="{color : cat.color}"  data-toggle="tooltip" title="click to get more information">{{cat.name}} - {{cat.parametresDTO.length}} parameters</a>
+                        <div :id="cat.paramref" :ref="cat.paramref" class="hideMetadataList">
                             <div v-for="p in cat.parametresDTO">
                                 <div>{{p.fullname}}</div>
                             </div>
@@ -54,8 +54,8 @@
            <div class="metadataFlex">
                 <div v-for="c in meta.categories" :class="(meta.categories.length == 1 || meta.categories.length == 2) ? 'metadataList50' : (meta.categories.length == 3) ? 'metadataList30' : 'metadataList20'">      
                    <div>
-                        <a class="metadataLink" @click="hideShowSectors($index)" :style="{color : c.color}"  data-toggle="tooltip" title="click to get more information">{{c.name}} - {{c.sectorsDTO.length}} sectors</a>
-                        <div ref="s-{{$index}}" class="hideMetadataList">
+                        <a class="metadataLink" @click="hideShowSectors(c.sectorref)" :style="{color : c.color}"  data-toggle="tooltip" title="click to get more information">{{c.name}} - {{c.sectorsDTO.length}} sectors</a>
+                        <div :id="c.sectorref" :ref="c.sectorref" class="hideMetadataList">
                             <div v-for="s in c.sectorsDTO">
                                 <div>{{s.nameSector}}</div>
                             </div>
@@ -136,6 +136,7 @@ export default {
       rcpScenarios: [],
       maccityInvs: [],
       contacts: [],
+      resolutions: [],
       meta: {},
       publication: '',
       spatialCoverage: '',
@@ -152,7 +153,6 @@ export default {
   },
   
   mounted: function () {
-   this.refresh(); 
   },
   
    updated: function() {
@@ -165,8 +165,7 @@ export default {
     console.log("Aeris Eccad Metadata - Creating");
     EventBus.$on('metadata', data => {
       this.inv = JSON.parse(data);
-		});
-    console.log(JSON.stringify(this.inv));
+	});
   },
   
   computed: {
@@ -202,31 +201,32 @@ export default {
             	if(name == "MACC") {
             		getMetadata($scope.maccityInvs[index].name);
             	}
-            }
+            }*/
 
-            $scope.hideShowSpecies = function (index) {  
-                if (document.getElementById('sp-' + index).className === 'hideMetadataList') {
-                    document.getElementById('sp-' + index).removeAttribute('hideMetadataList');
-                    document.getElementById('sp-' + index).setAttribute('class', 'showMetadataList');
-                }
-                else {
-                    document.getElementById('sp-' + index).removeAttribute('showMetadataList');
-                    document.getElementById('sp-' + index).setAttribute('class', 'hideMetadataList');
-                }
-            };
+    hideShowSpecies: function (chosenRef) {  
+       
+        if (document.getElementById(chosenRef).className === 'hideMetadataList') {
+            document.getElementById(chosenRef).removeAttribute('hideMetadataList');
+            document.getElementById(chosenRef).setAttribute('class', 'showMetadataList');
+        }
+        else {
+            document.getElementById(chosenRef).removeAttribute('showMetadataList');
+            document.getElementById(chosenRef).setAttribute('class', 'hideMetadataList');
+        }
+    },
 
-            $scope.hideShowSectors = function (index) {
-                if (document.getElementById('s-' + index).className === 'hideMetadataList') {
-                    document.getElementById('s-' + index).removeAttribute('hideMetadataList');
-                    document.getElementById('s-' + index).setAttribute('class', 'showMetadataList');
-                }
-                else {
-                    document.getElementById('s-' + index).removeAttribute('showMetadataList');
-                    document.getElementById('s-' + index).setAttribute('class', 'hideMetadataList');
-                }
-            };
+    hideShowSectors: function (chosenRef) {
+        if (document.getElementById(chosenRef).className === 'hideMetadataList') {
+            document.getElementById(chosenRef).removeAttribute('hideMetadataList');
+            document.getElementById(chosenRef).setAttribute('class', 'showMetadataList');
+        }
+        else {
+            document.getElementById(chosenRef).removeAttribute('showMetadataList');
+            document.getElementById(chosenRef).setAttribute('class', 'hideMetadataList');
+        }
+    },
             
-           }*/
+           
 
   getMetadata: function(inventoryName) {
     this.$http.get(this.eccadConfig.api + "dataset/inventory?title=" + inventoryName)
@@ -246,6 +246,14 @@ export default {
                     //TODO !!!!!
                     this.source = "";
                     
+                    var count = 0;
+
+                    meta.categories.forEach( function(c) {
+                       c.sectorref = "sector" + count;
+                       c.paramref = "param" + count;
+                       count++;
+                    });  
+
                     var contactsAux = [];
                     meta.contacts.forEach(function (m) {
                     var contact = m.firstName + " " + m.lastName + " (" + m.mail + ")";

@@ -12,11 +12,15 @@ Vue.use(vueSlider);
 import VueResource from 'vue-resource';
 Vue.use(VueResource);
 
+import VeeValidate from 'vee-validate';
+Vue.use(VeeValidate);
+
 export const EventBus = new Vue();
 
 import AerisEccadCategory from './aeris-eccad-listbox/aeris-eccad-category/aeris-eccad-category.vue'
 import AerisEccadParameter from './aeris-eccad-listbox/aeris-eccad-parameter/aeris-eccad-parameter.vue'
 import AerisEccadDataset from './aeris-eccad-listbox/aeris-eccad-dataset/aeris-eccad-dataset.vue'
+import AerisEccadInventory from './aeris-eccad-listbox/aeris-eccad-dataset/aeris-eccad-inventory.vue'
 import AerisEccadScenario from './aeris-eccad-listbox/aeris-eccad-scenario/aeris-eccad-scenario.vue'
 import AerisEccadSector from './aeris-eccad-listbox/aeris-eccad-sector/aeris-eccad-sector.vue'
 import AerisEccadDate from './aeris-eccad-listbox/aeris-eccad-date/aeris-eccad-date.vue'
@@ -45,6 +49,12 @@ import AerisEccadDrawButtons from './aeris-eccad-button/aeris-eccad-draw/aeris-e
 import AerisEccadDownload from './aeris-eccad-download/aeris-eccad-download.vue'
 import AerisEccadResolution from './aeris-eccad-listbox/aeris-eccad-resolution/aeris-eccad-resolution.vue'
 import AerisEccadMetadata from './aeris-eccad-metadata/aeris-eccad-metadata.vue'
+import AerisEccadTemporalChart from './aeris-eccad-chart/aeris-eccad-temporal/aeris-eccad-temporal.vue'
+import AerisEccadEmissionTSChart from './aeris-eccad-chart/aeris-eccad-emissionts/aeris-eccad-etschart.vue'
+import AerisEccadEmissionTS from './aeris-eccad-emissionts/aeris-eccad-emissionts.vue'
+import AerisEccadInventoryTSChart from './aeris-eccad-chart/aeris-eccad-inventoryts/aeris-eccad-itschart.vue'
+import AerisEccadInventoryTS from './aeris-eccad-inventoryts/aeris-eccad-inventoryts.vue'
+import AerisEccadLogin from './aeris-eccad-login/aeris-eccad-login.vue'
 
 import AerisEccadSelection from './aeris-eccad-selection/aeris-eccad-selection.vue'
 import AerisEccadApp from './aeris-eccad-app/aeris-eccad-app.vue'
@@ -52,6 +62,7 @@ import AerisEccadApp from './aeris-eccad-app/aeris-eccad-app.vue'
 Vue.customElement('aeris-eccad-category',AerisEccadCategory);
 Vue.customElement('aeris-eccad-parameter',AerisEccadParameter);
 Vue.customElement('aeris-eccad-dataset',AerisEccadDataset);
+Vue.customElement('aeris-eccad-inventory',AerisEccadInventory);
 Vue.customElement('aeris-eccad-scenario',AerisEccadScenario);
 Vue.customElement('aeris-eccad-sector',AerisEccadSector);
 Vue.customElement('aeris-eccad-rb-unit',AerisEccadRbUnit);
@@ -80,6 +91,12 @@ Vue.customElement('aeris-eccad-drawbuttons',AerisEccadDrawButtons);
 Vue.customElement('aeris-eccad-download',AerisEccadDownload);
 Vue.customElement('aeris-eccad-resolution',AerisEccadResolution);
 Vue.customElement('aeris-eccad-metadata',AerisEccadMetadata);
+Vue.customElement('aeris-eccad-temporalchart',AerisEccadTemporalChart);
+Vue.customElement('aeris-eccad-emissiontschart',AerisEccadEmissionTSChart);
+Vue.customElement('aeris-eccad-emissionts',AerisEccadEmissionTS);
+Vue.customElement('aeris-eccad-inventorytschart',AerisEccadInventoryTSChart);
+Vue.customElement('aeris-eccad-inventoryts',AerisEccadInventoryTS);
+Vue.customElement('aeris-eccad-login',AerisEccadLogin);
 
 Vue.customElement('aeris-eccad-selection',AerisEccadSelection);
 Vue.customElement('aeris-eccad-app',AerisEccadApp);

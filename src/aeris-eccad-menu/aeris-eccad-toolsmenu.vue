@@ -58,7 +58,7 @@ export default {
   created: function () {
     console.log("Aeris Eccad Tools Menu - Creating");
     this.links = [
-      {url: '', text: 'Map', menu: 'tools'},
+      {url: '', text: 'Map Display', menu: 'tools'},
       {url: '', text: 'Mapcompare', menu: 'tools' },
       {url: '', text: 'Timeseries Analysis', menu: 'tools' },
       {url: '', text: 'Scatterplot', menu: 'tools'},

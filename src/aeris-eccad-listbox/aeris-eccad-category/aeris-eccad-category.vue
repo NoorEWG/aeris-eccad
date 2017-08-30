@@ -27,7 +27,15 @@ export default {
     first: {
       type: Boolean,
       default: true
-      }
+    },
+    ets: {
+      type: Boolean,
+      default: false
+    },
+    its: {
+      type: Boolean,
+      default: false
+    }
   },
   
   data () {
@@ -45,11 +53,18 @@ export default {
 	      this.refresh();
     },
     selectedCategory (value) {
-    	  if(this.premier) {
+    	  
+        if(this.premier && !this.ets && !this.its) {
     	    EventBus.$emit('category', JSON.stringify(value));
     	  }
-    	  else {
+    	  if(!this.premier) {
     	    EventBus.$emit('category2', JSON.stringify(value));
+    	  }
+        if (this.ets) {
+          EventBus.$emit('etCategory', JSON.stringify(value));
+    	  }
+        if (this.its) {
+          EventBus.$emit('itCategory', JSON.stringify(value));
     	  }
     }
     

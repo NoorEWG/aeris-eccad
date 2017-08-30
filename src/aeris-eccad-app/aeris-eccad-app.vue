@@ -13,11 +13,15 @@
       <aeris-eccad-mainmenu></aeris-eccad-mainmenu>
     </div>  
     
-    <div v-show="selectionBar">
+    <div v-show="!auth && toolsMenu || loginForm">
+      <aeris-eccad-login></aeris-eccad-login>  
+    </div>
+    
+    <div v-show="auth && selectionBar">
       <aeris-eccad-selection service="http://eccad.aeris-data.fr/eccad2web/rest/"></aeris-eccad-selection>
     </div> 
 
-    <div v-show="toolsMenu">
+    <div v-show="auth && toolsMenu">
       <aeris-eccad-toolsmenu></aeris-eccad-toolsmenu>  
     </div>
 
@@ -28,6 +32,18 @@
     <div v-show="catalogMenu && catalogLink.text === 'Inventories'">
       <aeris-eccad-catalog service="http://eccad.aeris-data.fr/eccad2web/rest/dataset/inventorydatasets?catgroup="></aeris-eccad-catalog>
     </div>
+    
+    <div v-show="catalogMenu && catalogLink.text === 'Temporal'">	 	
+      <aeris-eccad-temporalchart></aeris-eccad-temporalchart>
+    </div>
+
+    <div v-show="catalogMenu && catalogLink.text === 'Emission Time Series'">	 	
+      <aeris-eccad-emissionts></aeris-eccad-emissionts>
+    </div>
+
+    <div v-show="catalogMenu && catalogLink.text === 'Inventory Time Series'">	 	
+      <aeris-eccad-inventoryts></aeris-eccad-inventoryts>
+    </div>
 
     <div v-show="catalogMenu && catalogLink.text === 'Metadata'">	 	
       <aeris-eccad-metadata></aeris-eccad-metadata>
@@ -37,12 +53,12 @@
       <aeris-eccad-dashboard></aeris-eccad-dashboard>
     </div>
 
-    <div v-show="toolsMenu && toolsLink.text === 'Map'" class="minToolsHeight">
+    <div v-show="auth && toolsMenu && toolsLink.text === 'Map'" class="minToolsHeight">
       <aeris-eccad-map service="http://thredds.sedoo.fr/thredds/wms/eccad/" name="map1"></aeris-eccad-map> 	
       <aeris-eccad-map service="http://thredds.sedoo.fr/thredds/wms/eccad/" first="false" name="map2"></aeris-eccad-map> 	  
     </div>
 
-    <div v-show="toolsMenu && toolsLink.text === 'Mapcompare'" class="headerFlex">
+    <div v-show="auth && toolsMenu && toolsLink.text === 'Mapcompare'" class="headerFlex">
       <div>
         <aeris-eccad-map service="http://thredds.sedoo.fr/thredds/wms/eccad/" name="mapcompare1" small="true"></aeris-eccad-map> 	
       </div>
@@ -52,15 +68,15 @@
       <aeris-eccad-map service="http://thredds.sedoo.fr/thredds/wms/eccad/" first="false" name="compare" compare="true"></aeris-eccad-map> 	  
     </div>
 
-    <div v-show="toolsMenu && toolsLink.text === 'Timeseries Analysis'">
+    <div v-show="auth && toolsMenu && toolsLink.text === 'Timeseries Analysis'">
       <aeris-eccad-barchart service="http://eccad.aeris-data.fr/eccad2web/rest/dataanalysis/barchart"></aeris-eccad-barchart>
     </div>
 
-    <div v-show="toolsMenu && toolsLink.text === 'Scatterplot'">
+    <div v-show="auth && toolsMenu && toolsLink.text === 'Scatterplot'">
       <aeris-eccad-scatterplot></aeris-eccad-scatterplot>
     </div>
 
-    <div v-show="toolsMenu && toolsLink.text === 'Download'">
+    <div v-show="auth && toolsMenu && toolsLink.text === 'Download'">
       <aeris-eccad-download></aeris-eccad-download>
     </div>
 
@@ -86,10 +102,12 @@ export default {
          text: '',
          menu: ''
        },
+       auth: false,
        mainMenu: '',
        selectionBar: false,
        toolsMenu: false,
-       catalogMenu: false
+       catalogMenu: false,
+       loginForm: false,
     }    
   },
   
@@ -132,6 +150,12 @@ export default {
 		});
     EventBus.$on('toolsmenu', data => {
       this.toolsLink = JSON.parse(data);
+		});	
+    EventBus.$on('auth', data => {
+      this.auth = JSON.parse(data);
+		});	
+    EventBus.$on('loginForm', data => {
+      this.loginForm = true;
 		});		        
   },
   

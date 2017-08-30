@@ -92,6 +92,7 @@ export default {
           geospatials.push(legend);
         });
         this.geospatials = geospatials;
+        this.selectedGeospatial = this.geospatials[0];
      },
      
      handleError: function(response) {

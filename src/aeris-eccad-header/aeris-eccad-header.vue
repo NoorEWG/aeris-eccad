@@ -10,30 +10,29 @@
         <div class="eccadHeaderSubtitle">Making data accessible and providing tools for data analysis</div> 
       </div>
       <div class="authWidth">
-        <a class="signIn" href="login" v-if="auth.auth == false">
+        <a class="signIn" href="" v-if="auth === false" @click="login">
           <div class="userIcon">
             <i class="fa fa-2x fa-user" aria-hidden="true"></i>
            </div>
-           <div>{{auth.text}}</div>
+           <div>{{signInText}}</div>
         </a> 
-        <span v-if="auth.auth == true">
-          <button class="signIn" v-on="logout()"> 
+        <span v-if="auth == true">
+          <button class="signIn" @click="logout"> 
             <div class="userIcon">
               <i class="fa fa-2x fa-user" aria-hidden="true"></i>
             </div>
-            <div>{{auth.text}}</div>
+            <div>{{signInText}}</div>
           </button>
-          <div class="signIn">{{auth.person.firstNamePerson}}</div>
+          <div class="signIn">{{user.firstNamePerson}}</div>
         </span>  
       </div>
     
-     <!--div>
-     logoutModal {{logoutModal}}
+     <div>
       <div v-if="logoutModal">
-        <input type=submit class="btn btn-sm" value="Sign out" data-ng-click="confirmLogout()"/>
-        <input type=submit class="btn btn-sm" value="Back" data-ng-click="noLogout()"/>
+        <input type=submit class="btn btn-sm" value="Sign out" @click="confirmLogout()"/>
+        <input type=submit class="btn btn-sm" value="Back" @click="noLogout()"/>
       </div>
-    </div-->
+    </div>
   </div>  	
 </template>
 
@@ -46,13 +45,10 @@ export default {
   data () {
     return {
         logoutModal: {type: Object},
-        auth: {
-        	auth : false,
-        	person: {
-        		firstNamePerson: '',
-        		email: '',
-        	}
-        },
+        auth: false,
+        user: {},
+        signInText: 'Sign in',
+        confirmLogout: false,
         eccadConfig : {
           api : "http://eccad.aeris-data.fr/eccad2web/rest/"    
         },
@@ -76,10 +72,16 @@ export default {
   created: function () {
     console.log("Aeris Eccad Header - Creating");
     EventBus.$on('hideMainHeader', data => {
-	console.log(data);        
-	this.hideHeader = JSON.parse(data)
-	console.log(JSON.stringify(this.hideHeader))
+      this.hideHeader = JSON.parse(data)
     });
+    EventBus.$on('user', data => {        
+      this.user = JSON.parse(data);
+    });
+    EventBus.$on('auth', data => {        
+      this.auth = JSON.parse(data);
+    });
+    
+
     this.getCategoryGroups();
     this.getSectors();
     this.getScenarios();
@@ -157,7 +159,19 @@ export default {
    // TODO
  },
  confirmLogout: function() {
-   // TODO
+   this.auth = false;
+   this.user = {};
+   EventBus.$emit('auth', JSON.stringify(this.auth));
+   EventBus.$off('user');
+
+ },
+
+ logout: function() {
+   this.logoutModal = true;
+ },
+
+ login: function() {
+   EventBus.$emit('loginForm', JSON.stringify(true));
  }
     
  }
