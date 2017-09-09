@@ -55,6 +55,7 @@ import AerisEccadEmissionTS from './aeris-eccad-emissionts/aeris-eccad-emissiont
 import AerisEccadInventoryTSChart from './aeris-eccad-chart/aeris-eccad-inventoryts/aeris-eccad-itschart.vue'
 import AerisEccadInventoryTS from './aeris-eccad-inventoryts/aeris-eccad-inventoryts.vue'
 import AerisEccadLogin from './aeris-eccad-login/aeris-eccad-login.vue'
+import AerisEccadSpecies from './aeris-eccad-species/aeris-eccad-species.vue'
 
 import AerisEccadSelection from './aeris-eccad-selection/aeris-eccad-selection.vue'
 import AerisEccadApp from './aeris-eccad-app/aeris-eccad-app.vue'
@@ -97,6 +98,7 @@ Vue.customElement('aeris-eccad-emissionts',AerisEccadEmissionTS);
 Vue.customElement('aeris-eccad-inventorytschart',AerisEccadInventoryTSChart);
 Vue.customElement('aeris-eccad-inventoryts',AerisEccadInventoryTS);
 Vue.customElement('aeris-eccad-login',AerisEccadLogin);
+Vue.customElement('aeris-eccad-species',AerisEccadSpecies);
 
 Vue.customElement('aeris-eccad-selection',AerisEccadSelection);
 Vue.customElement('aeris-eccad-app',AerisEccadApp);

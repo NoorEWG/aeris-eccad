@@ -33,6 +33,10 @@
       <aeris-eccad-catalog service="http://eccad.aeris-data.fr/eccad2web/rest/dataset/inventorydatasets?catgroup="></aeris-eccad-catalog>
     </div>
     
+    <div v-show="catalogMenu && catalogLink.text === 'Species'">	 	
+      <aeris-eccad-species></aeris-eccad-species>
+    </div>
+
     <div v-show="catalogMenu && catalogLink.text === 'Temporal'">	 	
       <aeris-eccad-temporalchart></aeris-eccad-temporalchart>
     </div>
