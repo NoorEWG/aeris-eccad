@@ -33,6 +33,14 @@
       <aeris-eccad-catalog service="http://eccad.aeris-data.fr/eccad2web/rest/dataset/inventorydatasets?catgroup="></aeris-eccad-catalog>
     </div>
     
+    <div v-show="catalogMenu && catalogLink.text === 'Sectors'">	 	
+      <aeris-eccad-catalog-sector service="http://eccad.aeris-data.fr/eccad2web/rest/dataset/inventoriesandsectors" ></aeris-eccad-catalog-sector>
+    </div>
+    
+    <div v-show="catalogMenu && catalogLink.text === 'Scenarios'">	 	
+      <aeris-eccad-catalog-scenario service="http://eccad.aeris-data.fr/eccad2web/rest/dataset/inventoriesandscenarios" ></aeris-eccad-catalog-scenario>
+    </div>
+
     <div v-show="catalogMenu && catalogLink.text === 'Species'">	 	
       <aeris-eccad-species></aeris-eccad-species>
     </div>
