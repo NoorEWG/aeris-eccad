@@ -6,10 +6,10 @@
 <template>
 	<div>
 		<div class="aeris-eccad-rb-unit">
-			<input type="radio" name="ft">{{flux}}</input> 
+			<input type="radio" :name="ft">{{flux}}</input> 
 		</div>
 		<div class="aeris-eccad-rb-unit">
-			<input type="radio" name="ft">{{total}}</input> 
+			<input type="radio" :name="ft">{{total}}</input> 
 		</div>
 	</div>
 </template>
@@ -25,26 +25,31 @@ export default {
     first: {
       type: Boolean,
       default: true
+    },
+    group: {
+      type: String,
+      default: 'ft'
     } 
   },
   
   data () {
     return {
-        unitService: this.service,
+      unitService: this.service,
     	selectedUnit: {type: String},
     	premier: this.first,
     	dataset: {type: Object},
     	category: {type: Object},
     	unit: {type: Object},
-    	flux: "flux",
-        total: "total"
+    	ft: this.group,
+      flux: 'flux',
+      total: 'total'
     }
   },
   
   watch: {
     service (value) {
-	      this.unitService = value
-	      this.refresh();
+	    this.unitService = value
+	    this.refresh();
     },
     dataset (value) {
     	this.dataset = value

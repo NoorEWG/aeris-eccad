@@ -84,7 +84,7 @@
         </div>
         <div class="selectionDrawRow">
           <div class="selectItem">
-            <aeris-eccad-rb-unit :service="unitService" first="false"></aeris-eccad-rb-unit> 	
+            <aeris-eccad-rb-unit :service="unitService" first="false" group="ft2"></aeris-eccad-rb-unit> 	
           </div>
         </div>
       </div>
