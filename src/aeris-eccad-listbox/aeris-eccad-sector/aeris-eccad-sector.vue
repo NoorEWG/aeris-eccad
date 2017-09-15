@@ -35,7 +35,8 @@ export default {
       sectorService: this.service,
     	sectors: {type: Array},
     	selectedSector: {type: Object},
-    	premier: this.first,
+    	variableNameSum: String,
+      premier: this.first,
     	dataset: {type: Object},
     	sector: {type: Object},
     	hasSector: false
@@ -54,9 +55,11 @@ export default {
     selectedSector (value) {
       if(this.premier) {
         EventBus.$emit('sector', JSON.stringify(value));
+        EventBus.$emit('sectorname', JSON.stringify(value.variable));
       }
       else {
         EventBus.$emit('sector2', JSON.stringify(value));
+        EventBus.$emit('sectorname2', JSON.stringify(value.variable));
       }	  
     }
   },
@@ -110,11 +113,11 @@ export default {
   
   refresh: function() {
   	   if (this.sectorService && this.dataset && this.dataset.id && this.dataset.id > 0) {
-	  	   var url = this.sectorService  + "/sectors/" + this.dataset.id;
+	  	   var url = this.sectorService  + "/sectors/" + this.parameter.id  + "/" + this.category.id + "/" + this.dataset.id;
 	   	   this.$http.get(url).then((response)=>{this.handleSuccess(response)},(response)=>{this.handleError(response)});
    	   }
   },
-      
+  
   handleSuccess : function(response) {
         this.sectors = response.data;
         if(this.sectors.length > 1) {
@@ -124,25 +127,25 @@ export default {
         else {
           this.hasSector = false;
         }
+        
         this.$http.get(this.sectorService + "/inventorycategory/" + this.dataset.id  + "/" + this.category.id )
            .then(function (result) {                                      
-              var variableNameSum = result.data.variableNameSum;
-              if(this.premier) {
-        	    EventBus.$emit('sectorname', variableNameSum);
+            var variableNameSum = result.data.variableNameSum;
+            this.sectors[0].variable = variableNameSum;
+            if(this.premier) {
+        	    EventBus.$emit('sectorname', JSON.stringify(variableNameSum));
       		  }
       		  else {
-        		EventBus.$emit('sectorname2', variableNameSum);
+        		  EventBus.$emit('sectorname2', JSON.stringify(variableNameSum));
       		  }	
-
+              console.log("SECTOR, url " + this.sectorService + "/netcdfs/" + this.parameter.id  + "/" + this.category.id + "/" + this.dataset.id)
               this.$http.get(this.sectorService + "/netcdfs/" + this.parameter.id  + "/" + this.category.id + "/" + this.dataset.id)
                 .then(function (result) { 
                   var netcdfs = result.data;
-                  // console.log(JSON.stringify(netcdfs));
         
                   this.$http.get(this.sectorService + "/files/" + netcdfs[0].id)
                     .then(function (result) { 
                        var file = result.data;
-                       console.log("sector listbox, file: " + JSON.stringify(file));
                         if(this.premier) {
         				  EventBus.$emit('file', JSON.stringify(file));
       					}

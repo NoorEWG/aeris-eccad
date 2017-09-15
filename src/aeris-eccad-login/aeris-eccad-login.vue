@@ -18,12 +18,12 @@
         <form name="validationForm" onsubmit="return false;">
             <div class="form-group">
               <label class="loginLabel">Email <span class="mandatory">*</span></label></label>
-              <input v-model="email" name="email" type="text" v-validate.initial="email" data-rules="required|email" placeholder="Email">
+              <input v-model="email" name="email" type="text" v-validate.initial="email" data-rules="required" placeholder="Email">
               <p class="text-danger" v-if="errors.has('email')">{{ errors.first('email') }}</p>
             </div>
             <div class="form-group">
               <label class="loginLabel">Password <span class="mandatory">*</span></label>
-              <input v-model="pwd" name="pwd" type="password" v-validate.initial="pwd" data-rules="required|email" placeholder="Password">
+              <input v-model="pwd" name="pwd" type="password" v-validate.initial="pwd" data-rules="required" placeholder="Password">
               <p class="text-danger" v-if="errors.has('pwd')">{{ errors.first('pwd') }}</p>
             </div>
             <div class="loginFlex">

@@ -66,7 +66,7 @@ export default {
   methods: {
   
     refresh: function() {
-        if (this.category && this.category.id) {
+        if (this.category && this.category.id > 0) {
           var url = 'http://eccad.aeris-data.fr/eccad2web/rest/data/inventoriesbycategory?categoryid='+ this.category.id;
           this.$http.get(url).then((response)=>{this.handleSuccess(response)},(response)=>{this.handleError(response)});
         }

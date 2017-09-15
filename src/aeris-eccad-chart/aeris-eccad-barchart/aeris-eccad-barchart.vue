@@ -85,7 +85,7 @@ export default {
 		   this.sector = JSON.parse(data);
 		});
 		EventBus.$on('sectorname', data => {
-		   this.sectorname = data;
+		   this.sectorname = JSON.parse(data);
 		});
 		EventBus.$on('scenario', data => {
 		   this.scenario = JSON.parse(data);
@@ -108,7 +108,7 @@ export default {
 		   this.sector = JSON.parse(data);
 		});
 		EventBus.$on('sectorname2', data => {
-		   this.sectorname = data;
+		   this.sectorname = JSON.parse(data);
 		});
 		EventBus.$on('scenario2', data => {
 		   this.scenario = JSON.parse(data);
@@ -140,9 +140,10 @@ export default {
   	   if (this.barchartService && this.sectorname && this.cType && this.file && this.file[0].name) {
   	   	   // console.log ("not all null");		    
   	       var fileName = this.file[0].name;
-  	       console.log(fileName);   
+  	       
   	       var url = this.barchartService  + "?filename=" + fileName + "&sector=" + this.sectorname + "&type=" + this.cType;
-	   	   this.$http.get(url).then((response)=>{this.handleSuccess(response)},(response)=>{this.handleError(response)}); 	   																																																																																																																																																																																																											}
+	   	   console.log(url);  
+           this.$http.get(url).then((response)=>{this.handleSuccess(response)},(response)=>{this.handleError(response)}); 	   																																																																																																																																																																																																											}
    },
       
   handleSuccess : function(response) {

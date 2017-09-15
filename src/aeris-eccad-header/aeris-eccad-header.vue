@@ -29,7 +29,7 @@
     
      <div>
       <div v-if="logoutModal">
-        <input type=submit class="btn btn-sm" value="Sign out" @click="confirmLogout()"/>
+        <input type=submit class="btn btn-sm" value="Sign out" @click="confirm()"/>
         <input type=submit class="btn btn-sm" value="Back" @click="noLogout()"/>
       </div>
     </div>
@@ -158,7 +158,7 @@ export default {
  noLogout: function() {
    // TODO
  },
- confirmLogout: function() {
+ confirm: function() {
    this.auth = false;
    this.user = {};
    EventBus.$emit('auth', JSON.stringify(this.auth));

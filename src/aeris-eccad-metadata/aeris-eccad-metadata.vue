@@ -66,8 +66,8 @@
         </div>
 
         <div class="metadataL">Institute</div>
-        <div class="metadataR">{{meta.contacts[0].organization.fullname}} - {{meta.contacts[0].organization.city}} - {{meta.contacts[0].organization.state}} </div>
-
+        <div class="metadataR">{{ institute }}</div>
+  
         <div class="metadataL">Contacts</div>
         <div class="metadataR">{{contacts}}</div>
 
@@ -76,7 +76,7 @@
         <div class="metadataL">&nbsp;</div>
         <div class="metadataR">{{meta.abstractField}}</div>
 
-        <div class=metadataHeader>Methodology</div>
+        <div class="metadataHeader">Methodology</div>
 
         <div class="metadataL">&nbsp;</div>
         <div class="metadataR">{{meta.methodology}}</div>
@@ -138,8 +138,10 @@ export default {
       contacts: [],
       resolutions: [],
       meta: {},
+      institute: '',
       publication: '',
       spatialCoverage: '',
+      source: '',
       eccadConfig: {
         api: 'http://eccad.aeris-data.fr/eccad2web/rest/'
       }
@@ -255,11 +257,22 @@ export default {
                     });  
 
                     var contactsAux = [];
-                    meta.contacts.forEach(function (m) {
-                    var contact = m.firstName + " " + m.lastName + " (" + m.mail + ")";
-                    contactsAux.push(contact);
-                    }); 
-                    this.contacts = contactsAux.join(" - ");
+                    if(meta.contacts) {
+                        meta.contacts.forEach(function (m) {
+                        var contact = m.firstName + " " + m.lastName + " (" + m.mail + ")";
+                        contactsAux.push(contact);
+                        }); 
+                        this.contacts = contactsAux.join(" - ");
+                        this.institute = meta.contacts[0].organization.fullname + ' - ' + meta.contacts[0].organization.city + ' - ' + meta.contacts[0].organization.state;
+
+                    }
+                    else {
+                        this.contacts = [];
+                        this.institute = '';
+                    }
+                
+                    
+                    
 
                     this.spatialCoverage = meta.geospacial.join(" - "); 
                     this.resolutions = meta.gridResolutions.join(" - ");

@@ -51,11 +51,13 @@ export default {
     	this.refresh();
     },
     selectedResolution (value) {
-      if(this.premier) {
-        EventBus.$emit('resolution', JSON.stringify(value));
-      }
-      else {
-        EventBus.$emit('resolution2', JSON.stringify(value));
+      if(value != null) {
+        if(this.premier) {
+          EventBus.$emit('resolution', JSON.stringify(value));
+        }
+        else {
+          EventBus.$emit('resolution2', JSON.stringify(value));
+        }
       }	  
     }
   },

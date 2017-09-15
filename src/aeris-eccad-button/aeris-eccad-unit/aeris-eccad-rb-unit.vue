@@ -6,10 +6,10 @@
 <template>
 	<div>
 		<div class="aeris-eccad-rb-unit">
-			<input type="radio" :name="ft">{{flux}}</input> 
+			<input type="radio" :name="ft" :checked="!isTotal" @click="changeUnit(flux)">{{flux}}</input> 
 		</div>
 		<div class="aeris-eccad-rb-unit">
-			<input type="radio" :name="ft">{{total}}</input> 
+			<input type="radio" :name="ft" :checked="isTotal" @click="changeUnit(total)" >{{total}}</input> 
 		</div>
 	</div>
 </template>
@@ -42,7 +42,9 @@ export default {
     	unit: {type: Object},
     	ft: this.group,
       flux: 'flux',
-      total: 'total'
+      total: 'total',
+      isTotal: false, 
+      fluxOrTotal: false,
     }
   },
   
@@ -58,6 +60,14 @@ export default {
     category (value) {
     	this.category = value
     	this.refresh();
+    },
+    fluxOrTotal (value) {
+      if(this.premier) {
+        EventBus.$emit('isTotal', JSON.stringify(value));
+      }
+      else {
+        EventBus.$emit('isTotal2', JSON.stringify(value));
+      }	  
     },
     selectedUnit (value) {
       if(this.premier) {
@@ -87,24 +97,25 @@ export default {
   
   created: function () {
     console.log("Aeris Eccad RadioButton Unit - Creating");
+    EventBus.$on('setTotal', data => {
+		  this.isTotal = JSON.parse(data);
+		});
     if(this.premier) {
 	    EventBus.$on('dataset', data => {
 		   this.dataset = JSON.parse(data);
-		});
-		EventBus.$on('category', data => {
+		  });
+		  EventBus.$on('category', data => {
 		   this.category = JSON.parse(data);
-		});
-	} 
-	else {
-		 EventBus.$on('dataset2', data => {
+		  });
+	  } 
+	  else {
+		  EventBus.$on('dataset2', data => {
 		   this.dataset = JSON.parse(data);
-		});
-		 EventBus.$on('category2', data => {
-		   this.category = JSON.parse(data);
-		});	
-	}
-    
-    
+		  });
+		  EventBus.$on('category2', data => {
+		    this.category = JSON.parse(data);
+		  });	
+	  }
   },
   
   computed: {
@@ -139,7 +150,16 @@ export default {
         var message = response.statusText;
         if(!error) message = 'Can\'t connect to the server';
         console.log('Error ' + error + ': ' + message);
- }
+  },
+
+  changeUnit: function( unitName) {
+    if(unitName === this.flux) {
+      this.fluxOrTotal = false;
+    }
+    else {
+      this.fluxOrTotal = true;
+    }
+  }
     
  }
 }

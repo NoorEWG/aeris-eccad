@@ -65,7 +65,7 @@
       <aeris-eccad-dashboard></aeris-eccad-dashboard>
     </div>
 
-    <div v-show="auth && toolsMenu && toolsLink.text === 'Map'" class="minToolsHeight">
+    <div v-show="auth && toolsMenu && toolsLink.text === 'Map Display'" class="minToolsHeight">
       <aeris-eccad-map service="http://thredds.sedoo.fr/thredds/wms/eccad/" name="map1"></aeris-eccad-map> 	
       <aeris-eccad-map service="http://thredds.sedoo.fr/thredds/wms/eccad/" first="false" name="map2"></aeris-eccad-map> 	  
     </div>

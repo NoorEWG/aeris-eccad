@@ -7,7 +7,7 @@
 	<div class="selectionRow"> 
     <div class="selectItem">
 		  <div class="aeris-eccad-reset">
-			  <input type="radio" name="reset" @click="reset" >Reset</input> 
+			  <input type="radio" name="reset" @click="resetSelection" >Reset</input> 
 		  </div>
 		</div>
     <div class="selectItem">
@@ -58,7 +58,7 @@ export default {
   
   methods: {
     
-    reset:function(){    
+    resetSelection:function(){    
       EventBus.$emit('resetselection', JSON.stringify(true));
     },
 

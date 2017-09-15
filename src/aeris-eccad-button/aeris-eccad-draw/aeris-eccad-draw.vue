@@ -147,7 +147,7 @@ export default {
 
     checkFiles: function() {
       if(this.file && this.file.name.length > 0 && this.file2 && this.file2.name.length > 0) {
-        var mapcompare = {
+        this.mapcompare = {
           file : this.file,
           file2 : this.file2
         }

@@ -99,22 +99,5 @@ export default {
 }
 </script>
 
-<style>
-
-.aeris-eccad-color-label {
-    font-weight: normal;
-    color: navy;
-    width: 78px;
-    min-width: 78px;
-    max-width: 78px;
-    display: inline-block;
-}
-.aeris-eccad-color-list {
-    display: inline-block;
-}
-
-.aeris-eccad-color-list > select {
-   width: 120px;
-}
-	
+<style>	
 </style>

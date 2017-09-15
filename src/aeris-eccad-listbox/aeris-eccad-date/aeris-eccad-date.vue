@@ -7,15 +7,15 @@
   <div>
     	<div class="aeris-eccad-date-label">Date</div>
 		  <div class="aeris-eccad-date-list">
-        <select>
-          <option v-bind:value="selectedBegindate" v-for="bd in beginDates" v-on:click="beginDateChanged()">{{ bd.date}}</option>
+        <select v-model="selectedBegindate">
+          <option v-bind:value="bd" v-for="(bd, index) in beginDates">{{ bd.date}}</option>
 		    </select>
         <span>-</span> 
-        <select>
-          <option v-bind:value="selectedEnddate" v-for="ed in endDates" v-on:click="endDateChanged()">{{ ed.date}}</option>
+        <select v-model="selectedEnddate">
+          <option v-bind:value="ed" v-for="(ed, index) in endDates">{{ ed.date}}</option>
         </select>
-		    <a class="dateIcon" v-on:click="dateBack()"><i class="fa fa-caret-left"></i></a>
-		    <a class="dateIcon" v-on:click="dateForward()"><i class="fa fa-caret-right"></i></a>
+		    <a class="dateIcon" @click="dateBack()"><i class="fa fa-caret-left"></i></a>
+		    <a class="dateIcon" @click="dateForward()"><i class="fa fa-caret-right"></i></a>
 	   </div>
   </div>
 </template>
@@ -35,26 +35,30 @@ export default {
        premier: this.first,
        beginDates: [],
        endDates: [],
-       selectedBegindate: '',
-       selectedEnddate: ''
+       selectedBegindate: {},
+       selectedEnddate: {},
     }
   },
   
   watch: {
     selectedBegindate (value) {
-      if(this.premier) {
-        EventBus.$emit('beginDate', JSON.stringify(value));
+      if(value) {
+        if(this.premier) {
+          EventBus.$emit('beginDate', JSON.stringify(value));
+        }
+        else {
+          EventBus.$emit('beginDate2', JSON.stringify(value));
+        }	  
       }
-      else {
-        EventBus.$emit('beginDate2', JSON.stringify(value));
-      }	  
     },
      selectedEnddate (value) {
-      if(this.premier) {
-        EventBus.$emit('endDate', JSON.stringify(value));
-      }
-      else {
-        EventBus.$emit('endDate2', JSON.stringify(value));
+      if(value) {
+        if(this.premier) {
+          EventBus.$emit('endDate', JSON.stringify(value));
+        }
+        else {
+          EventBus.$emit('endDate2', JSON.stringify(value));
+        }
       }	  
     }
   },
@@ -81,20 +85,38 @@ export default {
     console.log("Aeris Eccad Grids - Creating");
     if(this.premier) {
 	    EventBus.$on('beginDates', data => {
-		    this.beginDates = JSON.parse(data);
+        var beginDates = JSON.parse(data);
+        for(var i = 0; i < beginDates.length; i++) {
+          beginDates[i].index = i;
+        }
+        this.beginDates = beginDates; 
+        this.selectedBegindate = beginDates[0];
       });
-		  console.log("begindates : " + JSON.stringify(this.beginDates));
 	    EventBus.$on('endDates', data => {
-		    this.endDates = JSON.parse(data);
+		    var endDates = JSON.parse(data);
+        for(var i = 0; i < endDates.length; i++) {
+          endDates[i].index = i;
+        }
+        this.endDates = endDates;
+        this.selectedEnddate = endDates[endDates.length - 1];
       });
 	  } 
 	  else {
 	    EventBus.$on('beginDates2', data => {
-		    this.beginDates = JSON.parse(data);
+		    var beginDates = JSON.parse(data);
+        for(var i = 0; i < beginDates.length; i++) {
+          beginDates[i].index = i;
+        }
+        this.beginDates = beginDates; 
+        this.selectedBegindate = beginDates[0];
 		  });  
-      console.log("begindates2 : " + JSON.stringify(this.beginDates));
 	    EventBus.$on('endDates2', data => {
-		    this.endDates = JSON.parse(data);
+		    var endDates = JSON.parse(data);
+        for(var i = 0; i < endDates.length; i++) {
+          endDates[i].index = i;
+        }
+        this.endDates = endDates;
+        this.selectedEnddate = endDates[endDates.length - 1];
 	    });
     } 
   },
@@ -103,6 +125,7 @@ export default {
   },
   
   methods: {
+   
     dateBack: function() {
 
     },

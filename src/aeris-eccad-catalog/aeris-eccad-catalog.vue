@@ -241,7 +241,9 @@ export default {
       this.invCats = aux;  
       this.selectedInvCats = aux;
     }
-    EventBus.$emit('invCats', JSON.stringify(aux));
+    if(aux) {
+        EventBus.$emit('invCats', JSON.stringify(aux));
+    }
   },
   
   handleError: function(response) {

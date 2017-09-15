@@ -1,8 +1,44 @@
 <template>
-  <span>	  
-    <div class="mapTitleHeader">{{dataset.titre}} {{resolution.fullNameResolution}} {{datatype.shortName}} {{parameter.shortName}} {{scenario.displayNameScenario}} - {{mapParams.time}}</div> 
-	<div :id="name" ref="map"></div>
-  </span>
+  <div>	  
+    <div class="mapTitleHeader">{{dataset.titre}} {{resolution.fullNameResolution}} {{datatype.shortName}} {{parameter.shortName}} {{scenario.displayNameScenario}} - {{beginDate.date}}</div>
+
+   <div class="mapDiv">
+	        <div class="mapWrapper">
+	            <div id="position1" class="mapPosition"></div>    
+	            <div class="toolsMap">
+	                <div :id="name" ref="map"></div>
+	            </div>
+	        </div>    
+	        <!--div id="toolsLegend" v-show="showLgv"-->
+			<div id="toolsLegend">	
+	            <img :id="legendId" :src="legendSrc" class="toolsLegend" />          
+	        </div>
+	        <!--div class="legendValues" v-show="showLgv"-->
+			<div class="legendValues">
+	                <div class="lv2"><b>{{ mapParams.max }}</b></div>
+	                <div class="lv1"><b>{{ legend[8] }}</b></div>
+	                <div class="lv1"><b>{{ legend[7] }}</b></div>
+	                <div class="lv1"><b>{{ legend[6] }}</b></div>
+	                <div class="lv1"><b>{{ legend[5] }}</b></div>
+	                <div class="lv1"><b>{{ legend[4] }}</b></div>
+	                <div class="lv1"><b>{{ legend[3] }}</b></div>
+	                <div class="lv1"><b>{{ legend[2] }}</b></div>
+	                <div class="lv1"><b>{{ legend[1] }}</b></div>
+	                <div class="lv2"><b>{{ legend[0] }}</b></div>                
+	                <div><b>{{ mapParams.min }}</b></div>
+	        </div>
+	    </div>
+		<!--div id="timeSeriesModal" class="tsModalDialog">
+        	<div>
+            	<b>Time Series</b> 
+				<input type="button" class="btn btn-default" value="export" @click="exportTimeSeries()" />
+				<input type="button" class="btn btn-default" value="close" @click="closeModal()" />
+            	<div :id="chartId"></div>
+        </div-->
+		<div :id="chartId"></div>
+    </div>
+
+	</div>	
 </template>
 
 <script>
@@ -18,6 +54,10 @@ export default {
 	name: {
 	  type: String,
       default: 'map'
+	},
+	legendname: {
+	  type: String,
+      default: 'legImg'
 	},
     first: {
       type: Boolean,
@@ -39,24 +79,41 @@ export default {
        grids: [],
 	   mapParams: {},
 	   regionParameters: {},
+	   lat: '',
+	   lon: '',
+	   timeSeriesSeries: [{
+		   series: [{
+			   name: '',
+			   data: []
+		   }],
+		   categories: []
+	   }],
 	   useMask: false,
 	   maskPrefix: '',
        parameter: {},
 	   datatype: {},
        dataset: {},
        sector: {},
-       sectorname: String,
+       sectorName: String,
        scenario: {},
+	   beginDate: {},
 	   resolution: {},
-       unit: {},
+       unit: {},	
        file: {},
        beginDate: {},
+	   endDate: {},
        logScale: true,
        numColors: 20,
        color: 'rainbow',
        isTotal: false,
 	   visible: false,
 	   mainmenu: '',
+	   legend: [],
+	   legendSrc: '',
+	   legendId: this.name + "Legend",
+	   showLgv: false,
+	   showModal: false,
+	   chartId: this.name + "TimeSeries"
     }
   },
   
@@ -64,26 +121,25 @@ export default {
     service (value) {
 	  this.mapService = value
     },
-	mainmenu (value) {
-	  if(this.mainmenu === 'tools') {
-		this.visible = true
-	  }
-	  else {
-	    this.visible = false	  
-	  }
-    },
     file (value) {
       this.getGrids();
     },
     sector (value) {
+	  if(value.name) {	
       this.getGrids();
+	  }
     },
-    sectorname (value) {
-      this.getGrids();
+    sectorName (value) {
+      if(value) {
+	  	this.getGrids();
+	  }
     },
     parameter (value) {
       this.getGrids();
-    },    
+    },
+	isTotal (value) {
+      this.getGrids();
+    }
   },
   computed: {  
   },
@@ -96,14 +152,27 @@ export default {
   
   created: function () {
     EventBus.$on('useMask', data => {
-		   this.useMask = data;
-		});
+		this.useMask = data;
+	});
 	EventBus.$on('mainmenu', data => {
-		   this.mainmenu = data;
-		});
+		this.mainmenu = data;
+	});
+	EventBus.$on('isMask', data => {
+		this.isMask = JSON.parse(data);
+	});
+	EventBus.$on('mapCoordinates', data => {
+		var mapCoordinates = JSON.parse(data);
+		this.lon = mapCoordinates.lon;
+		this.lat = mapCoordinates.lat;
+		this.setTimeSeries(this.lon, this.lat);
+	});
+
 
     if(this.first && !this.compare) {
-      	EventBus.$on('dataset', data => {
+      	EventBus.$on('isTotal', data => {
+			this.isTotal = JSON.parse(data);
+		});
+		EventBus.$on('dataset', data => {
 	    	this.dataset = JSON.parse(data);
 	  	});
 		EventBus.$on('datatype', data => {
@@ -111,12 +180,13 @@ export default {
 		});
 		EventBus.$on('parameter', data => {
 			this.parameter = JSON.parse(data);
+			this.parameterName = this.parameter.displayName;
 		});
 		EventBus.$on('sector', data => {
 			this.sector = JSON.parse(data);
 		});
 		EventBus.$on('sectorname', data => {
-			this.sectorname = data;
+			this.sectorName = JSON.parse(data);
 		});
 		EventBus.$on('scenario', data => {
 			this.scenario = JSON.parse(data);
@@ -133,9 +203,17 @@ export default {
 		EventBus.$on('beginDate', data => {
 			this.beginDate = JSON.parse(data);
 		});
+		EventBus.$on('parameterName', data => {
+			console.log("MAP, parameterName: " + data)
+			this.parameterName = JSON.parse(data);
+		});
+		
     }
     else if (!this.first && !this.compare) {
-     	EventBus.$on('dataset2', data => {
+     	EventBus.$on('isTotal2', data => {
+			this.isTotal = JSON.parse(data);
+		});
+		EventBus.$on('dataset2', data => {
 		   this.dataset = JSON.parse(data);
 		});
 		EventBus.$on('datatype2', data => {
@@ -143,12 +221,13 @@ export default {
 		});
 		EventBus.$on('parameter2', data => {
 		   this.parameter = JSON.parse(data);
+		   this.parameterName = this.parameter.displayName;
 		});	
 		EventBus.$on('sector2', data => {
 		   this.sector = JSON.parse(data);
 		});
 		EventBus.$on('sectorname2', data => {
-		   this.sectorname = data;
+		   this.sectorName = JSON.parse(data);
 		});
 		EventBus.$on('scenario2', data => {
 		   this.scenario = JSON.parse(data);
@@ -165,6 +244,10 @@ export default {
         EventBus.$on('beginDate2', data => {
 		   this.beginDate = JSON.parse(data);
 		});
+		EventBus.$on('parameterName2', data => {
+			this.parameterName = JSON.parse(data);
+		});
+
     }
     else {
         // TODO
@@ -178,10 +261,10 @@ export default {
 
     getGrids: function() {
      
-      if(this.file && this.file[0] && this.file[0].id && this.sector && this.sector.id && this.parameter) {    
+      if(this.file && this.file[0] && this.file[0].id && this.sector && this.sector.id && this.parameterName) {    
         this.grids = [];
         this.mapParams = {};
-        this.$http.get("http://eccad.aeris-data.fr/eccad2web/rest/data/grids?fileid=" + this.file[0].id + "&param=" + this.parameter.displayName + "&mask=" + this.useMask + "&total=" + this.isTotal + "&sectorid=" + this.sector.id)
+        this.$http.get("http://eccad.aeris-data.fr/eccad2web/rest/data/grids?fileid=" + this.file[0].id + "&param=" + this.parameterName + "&mask=" + this.useMask + "&total=" + this.isTotal + "&sectorid=" + this.sector.id)
             .then(function(result){
 
             this.grids = result.data;
@@ -203,6 +286,7 @@ export default {
             var selectedBegindate = beginDates[0];
             this.beginDate = beginDates[0];
             var selectedEnddate = endDates[endDates.length-1];
+			this.endDate = selectedEnddate;
             
             // set mapParams
             this.mapParams.isCombine = false;
@@ -216,24 +300,25 @@ export default {
             this.mapParams.boundingBox = {latMin: -180, latMax: 180, lonMin: -90, lonMax: 90};
 
             if(this.first) {
-            EventBus.$emit('beginDates', JSON.stringify(beginDates));
-            EventBus.$emit('endDates', JSON.stringify(beginDates));
-            EventBus.$emit('mapParams', JSON.stringify(this.mapParams));
-			EventBus.$emit('min', JSON.stringify(min));
-			EventBus.$emit('max', JSON.stringify(max));
-          }
-          else {
-            EventBus.$emit('beginDates2', JSON.stringify(beginDates));
-            EventBus.$emit('endDates2', JSON.stringify(beginDates));
-            EventBus.$emit('mapParams2', JSON.stringify(beginDates));    
-			EventBus.$emit('min2', JSON.stringify(min));
-			EventBus.$emit('max2', JSON.stringify(max));
-		  }
-          this.draw();          
+				EventBus.$emit('beginDates', JSON.stringify(beginDates));
+				EventBus.$emit('endDates', JSON.stringify(beginDates));
+				EventBus.$emit('mapParams', JSON.stringify(this.mapParams));
+				EventBus.$emit('min', JSON.stringify(min));
+				EventBus.$emit('max', JSON.stringify(max));
+          	}
+          	else {
+				EventBus.$emit('beginDates2', JSON.stringify(beginDates));
+				EventBus.$emit('endDates2', JSON.stringify(beginDates));
+				EventBus.$emit('mapParams2', JSON.stringify(beginDates));    
+				EventBus.$emit('min2', JSON.stringify(min));
+				EventBus.$emit('max2', JSON.stringify(max));
+		  	}
+          	this.draw(); 
+		  	this.getLegend();         
         });
       } 
 	  else {
-		  this.draw();
+		this.draw();
 	  }
     },  
 
@@ -260,14 +345,14 @@ export default {
 	  while (el.firstChild) {
         el.removeChild(el.firstChild);
       }
-
-	    // color range and logscale: todo  
-      if (this.mapService && this.sectorname && this.file && this.file[0].name && this.beginDate) {	    
+      
+	  // color range and logscale: todo  
+      if (this.mapService && this.sectorName && this.file && this.file[0].name && this.beginDate) {	    
   	    var fileName = this.file[0].name;
   	    var params = {
              'FORMAT' : 'image/png',
             'TRANSPARENT' : false,
-            'LAYERS' : this.sectorname,
+            'LAYERS' : this.sectorName,
             'TIME' :  this.beginDate.date + 'T00%3A00%3A00.000Z',
             'COLORSCALERANGE' : this.mapParams.colorScaleRange,
             'LOGSCALE' : this.logScale,
@@ -331,35 +416,34 @@ export default {
         });
 		
 		
-		   var mask = "";
-            if(this.maskPrefix != "") {
-                mask = this.maskPrefix + "_"
-            }
-            
-            var totalDir = "";
-            if(this.isTotal || this.maskPrefix != "") {
-                totalDir = "totals/";
-            }
-            if(this.mapParams.isRegion && this.mapParams.layer.length > 1 && this.mapParams.useRegion) {
-            	totalDir = "compare/";
-            	mask = "";
-            }
-            
-            
-            // if(this.mapParams.colorScaleRange.toUpperCase().includes("E308")) {
-	            // console.log("thredds url: " + this.mapService + totalDir + mask +  fileName);
-                var eccadSource = new ol.source.TileWMS({
-	                    url: this.mapService + totalDir + mask +  fileName,
-	                    params: params
-	                });
-	
-	              var eccadLayer = new ol.layer.Tile({
-	                    source : eccadSource
-	                });  
-            // }
+		var mask = "";
+		if(this.maskPrefix != "") {
+			mask = this.maskPrefix + "_"
+		}
+		
+		var totalDir = "";
+		if(this.isTotal || this.maskPrefix != "") {
+			totalDir = "totals/";
+		}
+		if(this.mapParams.isRegion && this.mapParams.layer.length > 1 && this.mapParams.useRegion) {
+			totalDir = "compare/";
+			mask = "";
+		}
+               
+        // if(!this.mapParams.colorScaleRange.toUpperCase().includes("E308")) {
+	    // console.log("thredds url: " + this.mapService + totalDir + mask +  fileName);
+			var eccadSource = new ol.source.TileWMS({
+					url: this.mapService + totalDir + mask +  fileName,
+					params: params
+				});
+
+				var eccadLayer = new ol.layer.Tile({
+					source : eccadSource
+				});  
+        // }
                 
 		
-        if(this.sectorname && this.file && this.file[0].name && this.beginDate) {
+        if(this.sectorName && this.file && this.file[0].name && this.beginDate) {
 			var overlayGroup = new ol.layer.Group({
 				title: 'Layers',
 				// layers: [eccadLayer, wbLayer]
@@ -375,141 +459,186 @@ export default {
 			});	
 		}
 
-		 var map = new ol.Map({
+		var map = new ol.Map({
                     target: this.name,
                     controls: ol.control.defaults().extend([
                         new ol.control.FullScreen()
                     ])
-                }); 
-            
-          
-		   map.addLayer(overlayGroup);
-		   map.addControl(mousePosition);
-           map.setView(view);
-           this.setTimeSeries(map);  
-		
-      } 
-	 },
+        		}); 
+              
+		map.addLayer(overlayGroup);
+		map.addControl(mousePosition);
+		map.setView(view);
+		map.on("click", function(evt) {
+	        this.lon = evt.coordinate[0];
+	        this.lat = evt.coordinate[1];
+			var mapCoordinates = {lon: evt.coordinate[0], lat: evt.coordinate[1] }
+			EventBus.$emit("mapCoordinates", JSON.stringify(mapCoordinates));
+			});	
+        } 
+	},
 	 
-	 setTimeSeries: function(map) {
-	      map.on("click", function(evt) {
-	        var lon = evt.coordinate[0];
-	        var lat = evt.coordinate[1];
+    getLegend: function() {
+           
+           // position will be between 0 and 100
+	    	var minp = 0;
+	    	var maxp = 100;
+
+                document.getElementById(this.legendId).src= 'http://thredds.sedoo.fr/thredds/wms/eccad/' + this.mapParams.filename + "?request=GetLegendGraphic&COLORBARONLY=true&WIDTH=15&HEIGHT=258&layer=sohefldo&NUMCOLORBANDS=" + this.numColors + "&palette=" + this.color.name;
+	               	
+	    		// The result should be between 100 an 10000000
+	    		var minv = Math.log(this.mapParams.min);
+	    		var maxv = Math.log(this.mapParams.max);
+	
+	    		// calculate adjustment factor
+	    		var scale = (maxv - minv) / (maxp - minp);
+	
+                var legend = [];
+	    		for (var i = 0; i < 10; i++) {
+                    legend[i] = Math.exp(minv + scale * (((i+1) * 10) - minp)).toPrecision(4);
+	    		}
+				this.legend = legend;
+	    		this.showLgv = true;
+            
+            
+        },	
+
+	 closeModal: function() {
+		 this.showModal = false;
+	 },
+
+	 exportTimeSeries: function() {
+		 // TODO
+	 },	
+
+	 setTimeSeries: function(lon, lat) {
 	        
 	        var threddsNcss = "http://thredds.sedoo.fr/thredds/ncss/grid/eccad/";
 	        var mask = "";
 	        var totals = "";
 	        
-	        //if($rootScope.maskPrefix.length > 1) {
-	        //    mask = $rootScope.maskPrefix + "_";
-	        //    totalsDir = "totals/";
-	        //}
+	        if(this.maskPrefix.length > 1) {
+	            mask = this.maskPrefix + "_";
+	            totalsDir = "totals/";
+	        }
+
+			var fileName = this.file[0].name;
 	        // get timeseries through thredds LET OP NU ALLEEN VOOR EERSTE MAP
-	        // var url = threddsNcss + totals + mask + $rootScope.mapParams.filename + "?var=" + $rootScope.sectorExt + "&latitude=" + lat + "&longitude=" + lon + "&vertCoord=&accept=csv&time_start=" + $rootScope.mapParams.time + "T00%3A00%3A00Z&time_end=" + $rootScope.endDate 
-			// $rootScope.endDates.length - 1].date + "T00%3A00%3A00Z";
-	        // console.log(url);
-	        // $http.get(url) 
-	        // .then(function(result){
+	        var url = threddsNcss + totals + mask + this.mapParams.filename + "?var=" + this.sectorName + "&latitude=" + lat + "&longitude=" + lon + "&vertCoord=&accept=csv&time_start=" + this.mapParams.time + "T00%3A00%3A00Z&time_end=" + this.endDate.date + "T00%3A00%3A00Z"; 
+	        console.log(url);
+	        this.$http.get(url) 
+	        	.then(function(result){
 	         
-	            //var data = result.data.split("\n");
-	      
-	            //var categories = [];
-	            //var series = [];
-	            //for(var i = 1; i < data.length-1 ; i++) {
+	            var data = result.data.split("\n");
+				var series = [];
+				var categories = [];
+	            for(var i = 1; i < data.length-1 ; i++) {
 	            	var tmp = data[i].split(",");
 	            	
-	            	$scope.timeSeriesSeries.push(parseFloat(tmp[3]));
-	            	$scope.timeSeriesCategories.push(tmp[0]);
-	            //}
-	            // transform into highchartsmap
-	            // and put in a modalform
-	        	// console.log(JSON.stringify($scope.timeSeriesSeries));
-	            // drawTimeSeries();
+	            	// this.timeSeriesSeries.push(parseFloat(tmp[3]));
+					series.push(parseFloat(tmp[3]));
+	            	categories.push(tmp[0].substring(0,10));
+	            }
+				this.timeSeriesSeries[0].series.push({name: "series", data: series});
+				this.timeSeriesSeries[0].categories = categories;
+	            // transform into highchartsmap and put in a modalform
+	        	console.log(JSON.stringify(this.timeSeriesSeries));
+	            this.drawTimeSeries();
 	  
-	        //});          
-        }); 
+	        });          
+    
 	 },
 	 
 	 drawTimeSeries: function() {
-	 /* var w = window.innerWidth || document.documentElement.clientWidth || document.body.clientWidth;
-	            var colors = ["#1f77b4", "#ff7f0e", "#2ca02c", "#98df8a", "#d62728", "#ff9896", "#9467bd", "#ffbb78", "#c5b0d5", "#8c564b", "#c49c94", "#e377c2", "#f7b6d2", "#7f7f7f", "#c7c7c7", "#aec7e8", "#bcbd22", "#dbdb8d", "#17becf", "#9edae5"];
-	            
-	            if($scope.timeSeriesSeries && $scope.timeSeriesSeries.length > 0) {
-	               
-	             
-	                var yAxis = [{title: {
-	                                text: $rootScope.totalUnit,
-	                                style: {
-	                                    fontSize: '14px',
-	                                    fontWeight: 'bold'
-	                                    }
-	                                }
-	                            }];
-	                 
-	                $scope.chart1 = new Highcharts.Chart('timeSeries', {
-	                    chart: {
-	                        type: 'column',
-	                        // width: $scope.chartWidth,
-	                        // height: h,
-	                        zoomType: 'xy'
-	                    },
-	                    colors: colors,
-	                    title: {
-	                        text: ''
-	                    },
+	    var w = window.innerWidth || document.documentElement.clientWidth || document.body.clientWidth;
+	    var colors = ["#1f77b4", "#ff7f0e", "#2ca02c", "#98df8a", "#d62728", "#ff9896", "#9467bd", "#ffbb78", "#c5b0d5", "#8c564b", "#c49c94", "#e377c2", "#f7b6d2", "#7f7f7f", "#c7c7c7", "#aec7e8", "#bcbd22", "#dbdb8d", "#17becf", "#9edae5"];
+		
+		if(this.timeSeriesSeries && this.timeSeriesSeries.length > 0) {
+			
+			var series = [];
+			series.push(this.timeSeriesSeries[0].series[1]);
+			console.log(JSON.stringify(series));
+			
+			var yAxis = [{title: {
+							text: this.totalUnit,
+							style: {
+								fontSize: '14px',
+								fontWeight: 'bold'
+								}
+							}
+						}];
+				
+			var chart = new Highcharts.Chart(this.chartId, {
+				chart: {
+					type: 'spline',
+					// width: $scope.chartWidth,
+					// height: h,
+					zoomType: 'xy'
+				},
+				colors: colors,
+				title: {
+					text: ''
+				},
 
-	                    subtitle: {
-	                        text: ''
-	                    },
+				subtitle: {
+					text: ''
+				},
 
-	                    xAxis: {
-	                        title: {
-	                            text: "Date",
-	                            style: {
-	                                fontSize: '14px',
-	                                fontWeight: 'bold'
-	                            }
-	                        },
-	                        labels: {
-	                            style: {
-	                                color: 'black',
-	                                fontSize:'14px',
-	                                fontWeight: 'bold'
-	                            }
-	                        }
-	                    },
-	                    yAxis: yAxis,
-	                            labels: {
-	                                style: {
-	                                    fontSize:'14px',
-	                                    fontWeight: 'bold'
-	                                }
-	                            },
-	                    credits: {
-	                        enabled: false
-	                    },
-	                    tooltip: {
-	                        crosshairs: [true],
-	                        enabled: true,
-	                        formatter: function() {
-	                            return  this.series.name + ' - ' + this.x + ': <b>' + this.y + '</b>';
-	                        }
-	                    },
-	                    exporting: {
-	                        buttons: {
-	                            exportButton: {
-	                                align: 'bottom',
-	                                x: 40
-	                            }
-	                        }
-	                    },  
-	                    series: $scope.timeSeriesSeries  
-	                });
-	                }
-	            } */
+				xAxis: {
+					title: {
+						text: "Time",
+						style: {
+							fontSize: '14px',
+							fontWeight: 'bold'
+						}
+					},
+					labels: {
+						style: {
+							color: 'black',
+							fontSize:'14px',
+							fontWeight: 'bold'
+						}
+					},
+					categories: this.timeSeriesSeries[0].categories,
+				},
+				yAxis: yAxis,
+						labels: {
+							style: {
+								fontSize:'14px',
+								fontWeight: 'bold'
+							},
+							formatter: function() {
+                                return this.value.toExponential(2); // 2 digits of precision
+                            }
+						},
+				credits: {
+					enabled: false
+				},
+				legend: {
+					enabled: false
+				},
+				tooltip: {
+					crosshairs: [true],
+					enabled: true,
+					formatter: function() {
+						return  '' + this.x + ': <b>' + this.y + '</b>';
+					}
+				},
+				exporting: {
+					buttons: {
+						exportButton: {
+							align: 'bottom',
+							x: 40
+						}
+					}
+				},  
+				series: series 
+			});
+			}
+		} 
 	 
 	 }
-}
+
 }  
 
 </script>
