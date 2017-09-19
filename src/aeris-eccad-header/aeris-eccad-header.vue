@@ -27,12 +27,12 @@
         </span>  
       </div>
     
-     <div>
+     <!--div>
       <div v-if="logoutModal">
         <input type=submit class="btn btn-sm" value="Sign out" @click="confirm()"/>
         <input type=submit class="btn btn-sm" value="Back" @click="noLogout()"/>
       </div>
-    </div>
+    </div-->
   </div>  	
 </template>
 

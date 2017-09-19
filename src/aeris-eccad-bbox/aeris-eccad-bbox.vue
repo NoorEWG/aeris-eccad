@@ -30,6 +30,7 @@
 import { EventBus } from '../aeris-event-bus/aeris-event-bus.js';
 export default {
   props: {
+    datasearch: {type: Boolean, default: false}
   },
   
   data () {
@@ -51,16 +52,24 @@ export default {
   
   watch: {
     lonMax (value) {
-	    EventBus.$emit('lonMaxR', JSON.stringify(value))
+      if(!this.datasearch) {
+	      EventBus.$emit('lonMaxR', JSON.stringify(value))
+      }
     },
     lonMin (value) {
-	    EventBus.$emit('lonMinR', JSON.stringify(value))
+      if(!this.datasearch) {
+	      EventBus.$emit('lonMinR', JSON.stringify(value))
+      }  
     },
     latMax (value) {
-	    EventBus.$emit('latMaxR', JSON.stringify(value))
+	    if(!this.datasearch) {
+        EventBus.$emit('latMaxR', JSON.stringify(value))
+      }
     },
     latMin (value) {
-	    EventBus.$emit('latMinR', JSON.stringify(value))
+	    if(!this.datasearch) {
+        EventBus.$emit('latMinR', JSON.stringify(value))
+      }  
     },
   },
   

@@ -85,9 +85,10 @@ export default {
         this.max = JSON.parse(data);
       }
     });
-    EventBus.$on('maxcompare', data => {
+  EventBus.$on('compareResult', data => {
       if(this.compare) {
-        this.max = JSON.parse(data);
+        var data = JSON.parse(data)
+        this.max = data.maxCompare;
       }
     });
   },

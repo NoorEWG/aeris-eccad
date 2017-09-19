@@ -107,6 +107,7 @@ export default {
       this.$http.get(this.eccadConfig.api + 'data/geospatial')
         .then(function(geo) {
           EventBus.$emit('geospatials', JSON.stringify(geo.data)); 
+          EventBus.$emit('allGeospatials', JSON.stringify(geo.data)); 
           // transform the geospatials to regions for select
           geo.data.forEach(function(g) {
             var legend = {};

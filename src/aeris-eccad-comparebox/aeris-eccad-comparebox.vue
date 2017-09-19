@@ -40,9 +40,9 @@ export default {
     return {
       showCompareBox: false,
       operands: [
-        {id: 1, name: '+'},
-        {id: 2, name: '-'},
-        {id: 3, name: '(a)'}
+        {id: 1, sign: '+'},
+        {id: 2, sign: '-'},
+        {id: 3, sign: '(a)'}
       ],
       selectedOperand: {id: 1, name: '+'}
     }

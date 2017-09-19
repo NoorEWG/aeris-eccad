@@ -70,10 +70,11 @@ export default {
   created: function () {
     console.log("Aeris Eccad Main Menu - Creating");
     this.links = [
-      {url: '', text: 'Home', menu: 'home'},
-      {url: '', text: 'Catalogue', menu: 'catalog'},
-      {url: '', text: 'Online-Tools', menu: 'tools'},
-      {url: '', text: 'Help', menu: 'help'}
+      {url: '', text: 'Home', menu: 'home', restricted: false},
+      {url: '', text: 'Catalogue', menu: 'catalog', restricted: false},
+      {url: '', text: 'Online-Tools', menu: 'tools', restricted: false},
+      {url: '', text: 'Admin', menu: 'admin', restricted: true},
+      {url: '', text: 'Help', menu: 'help', restricted: false},
     ];
     this.selectedLink = this.links[0];
     //EventBus.$on('mainmenu', data => {

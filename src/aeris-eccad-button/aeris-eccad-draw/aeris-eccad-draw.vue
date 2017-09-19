@@ -11,7 +11,7 @@
     </div>
     <div> 
       <input class="drawButton" type="button" :value="compareButton"
-        @click="drawCompare()" v-show="showCompareButton" />
+        @click="drawMapCompare()" v-show="showCompareButton" />
     </div>
     <div>
       <input class="drawButton" type="button" :value="timeSeriesButton"
@@ -135,7 +135,7 @@ export default {
     },
 
     checkFile: function() {
-      if(this.file && this.file.name.length > 0) {
+      if(this.file && this.file[0]) {
         var mapcompare = {
           file : this.file,
           file2 : this.file2
@@ -146,7 +146,7 @@ export default {
     },
 
     checkFiles: function() {
-      if(this.file && this.file.name.length > 0 && this.file2 && this.file2.name.length > 0) {
+      if(this.file && this.file[0] && this.file2 && this.file2[0]) {
         this.mapcompare = {
           file : this.file,
           file2 : this.file2

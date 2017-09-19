@@ -86,10 +86,21 @@
 					<li :class="resolutionClass(resolution)"
 						v-for="resolution in resolutions"
 						v-on:click="resolutionChanged(resolution)">{{resolution.fullNameResolution}}</li>
+				</ul>
+				<span class="overviewTitle">Geospatial</span> 
+				<span class="eccadBadge" v-if="selectedGeospatialIds.length < 1">{{geospatials.length}}</span>
+				<span class="eccadBadge" v-if="selectedGeospatialIds.length >= 1">{{selectedGeospatialIds.length}}</span>
+				<ul class="overviewListM">
+					<li :class="geospatialClass(geospatial)"
+						v-for="geospatial in geospatials"
+						v-on:click="geospatialChanged(geospatial)">{{geospatial.fullnameGeospatial}}</li>
 				</ul> 
-  
+				<div>
+					<aeris-eccad-bbox datasearch="true"></aeris-eccad-bbox>  
+				</div>	
           		<div type="button" class="btn btn-default floatRight"  v-on:click="reset()" >reset<span class="fa fa-close"></span></div>
-          	</div>		  
+				
+			</div>		  
     	</div>
     </div>
 </template>
@@ -111,6 +122,7 @@ export default {
 	  	species : [],
 	  	resolutions: [],
 	  	speciesGroups : [],
+		geospatials: [],  
       selectedDatatypeIds : [],
       selectedDatasetIds : [],
 	  	selectedSectorIds : [],
@@ -118,6 +130,7 @@ export default {
 	  	selectedSpeciesIds : [],
 	  	selectedSpeciesGroupIds : [],
 	  	selectedResolutionIds : [],
+		selectedGeospatialIds: [],  
       slider : {
 	    	minValue: new Date().getFullYear(),
 	    	maxValue: new Date().getFullYear(),
@@ -172,6 +185,9 @@ export default {
 		EventBus.$on('allResolutions', data => {
 			this.resolutions = JSON.parse(data);
 		});	
+		EventBus.$on('allGeospatials', data => {
+			this.geospatials = JSON.parse(data);
+		});	
   },
   
   computed: {
@@ -191,6 +207,7 @@ export default {
 	    this.selectedSpeciesIds = [];
 		this.selectedSpeciesGroupIds = [];
 		this.selectedResolutionIds = [];
+		this.selectedGeospatialIds = [];
 		this.slider.minValue = new Date().getFullYear();
 		this.slider.maxValue = new Date().getFullYear();
 		this.noScenarios = false;
@@ -286,6 +303,7 @@ export default {
 
  datasetChanged : function(dataset) {
     	
+		console.log(JSON.stringify(dataset));
     	if(this.selectedDatasetIds) {
           this.selectedDatasetIds = [];
     	}
@@ -532,6 +550,13 @@ export default {
    }
    this.selectedResolutionIds.push(resolution.id);
  },
+
+geospatialChanged : function(geospatial) {
+   if(this.selectedGeospatialIds) {
+     this.selectedGeospatialIds = [];
+   }
+   this.selectedGeospatialIds.push(geospatial.id);
+ },
  
     datatypeClass : function(datatype) {
     	// setClassName(datatype, $scope.selectedDatatypeIds);
@@ -640,6 +665,19 @@ export default {
     		return 'overviewSelected';
     	}
     	if (this.selectedResolutionIds.length > 0 && this.selectedResolutionIds.indexOf(res.id) < 0) {
+    		return 'overviewDisabled';
+    	}
+    }, 
+
+	geospatialClass : function(geospatial) {
+    	
+     	if(!this.selectedGeospatialIds) {
+    		return '';
+    	}
+    	if (this.selectedGeospatialIds && this.selectedGeospatialIds.indexOf(geospatial) >= 0) {
+    		return 'overviewSelected';
+    	}
+    	if (this.selectedGeospatialIds.length > 0 && this.selectedGeospatialIds.indexOf(geospatial) < 0) {
     		return 'overviewDisabled';
     	}
     }, 
@@ -830,11 +868,16 @@ export default {
   },	
     
   getSpeciesGroupsBySpecies : function(speciesId) {
-	  this.$http.get(this.eccadConfig.api + "data/parametergroupbyparameter", {params: {'parameterid' : speciesId}})
+	this.$http.get(this.eccadConfig.api + "data/parametergroupbyparameter", {params: {'parameterid' : speciesId}})
 		.then(function (result) {	
 			this.selectedSpeciesGroupIds.push(result.data.id);		
 		});
-	  this.selectedSpeciesGroupIds = _.uniq(this.selectedSpeciesGroupIds);
+	this.selectedSpeciesGroupIds = _.uniq(this.selectedSpeciesGroupIds);
+  },
+
+  getGeospatials : function(geospatial) {  
+	this.selectedGeospatialIds.push(geospatial.id);		
+	this.selectedGeospatialIds = _.uniq(this.selectedGeospatialIds);
   },
   
   

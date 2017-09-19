@@ -66,18 +66,24 @@
     </div>
 
     <div v-show="auth && toolsMenu && toolsLink.text === 'Map Display'" class="minToolsHeight">
-      <aeris-eccad-map service="http://thredds.sedoo.fr/thredds/wms/eccad/" name="map1"></aeris-eccad-map> 	
-      <aeris-eccad-map service="http://thredds.sedoo.fr/thredds/wms/eccad/" first="false" name="map2"></aeris-eccad-map> 	  
+      <div>
+        <aeris-eccad-map service="http://thredds.sedoo.fr/thredds/wms/eccad/" first="true" name="map1"></aeris-eccad-map> 	
+        <aeris-eccad-map service="http://thredds.sedoo.fr/thredds/wms/eccad/" first="false" name="map2"></aeris-eccad-map> 	  
+      </div>
     </div>
 
-    <div v-show="auth && toolsMenu && toolsLink.text === 'Mapcompare'" class="headerFlex">
-      <div>
-        <aeris-eccad-map service="http://thredds.sedoo.fr/thredds/wms/eccad/" name="mapcompare1" small="true"></aeris-eccad-map> 	
+    <div v-show="auth && toolsMenu && toolsLink.text === 'Mapcompare'">
+      <div class="headerFlex">
+        <div style="width: 49%;">
+          <aeris-eccad-map service="http://thredds.sedoo.fr/thredds/wms/eccad/" name="mapcompare1" small="true"></aeris-eccad-map> 	
+        </div>
+        <div style="width: 49%;">
+          <aeris-eccad-map service="http://thredds.sedoo.fr/thredds/wms/eccad/" first="false" name="mapcompare2" small="true"></aeris-eccad-map> 	  
+        </div>
       </div>
       <div>
-        <aeris-eccad-map service="http://thredds.sedoo.fr/thredds/wms/eccad/" first="false" name="mapcompare2" small="true"></aeris-eccad-map> 	  
+        <aeris-eccad-map service="http://thredds.sedoo.fr/thredds/wms/eccad/" name="compare" compare="true"></aeris-eccad-map> 	  
       </div>
-      <aeris-eccad-map service="http://thredds.sedoo.fr/thredds/wms/eccad/" first="false" name="compare" compare="true"></aeris-eccad-map> 	  
     </div>
 
     <div v-show="auth && toolsMenu && toolsLink.text === 'Timeseries Analysis'">
@@ -134,7 +140,12 @@ export default {
         this.selectionBar = false;
         this.toolsMenu = false;
         this.catalogMenu = true;
-      } else {
+      } 
+      else if (value === 'admin') {
+        this.selectionBar = false;
+        this.toolsMenu = false;
+        this.catalogMenu = false;
+      }else {
         this.selectionBar = false;
         this.toolsMenu = false;
         this.catalogMenu = false;

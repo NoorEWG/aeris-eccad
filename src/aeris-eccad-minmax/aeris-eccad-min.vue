@@ -85,9 +85,10 @@ export default {
         this.min = JSON.parse(data);
       }
     });
-    EventBus.$on('mincompare', data => {
+    EventBus.$on('compareResult', data => {
       if(this.compare) {
-        this.min = JSON.parse(data);
+        var data = JSON.parse(data)
+        this.min = data.minCompare;
       }
     });
   },
