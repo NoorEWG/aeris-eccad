@@ -6,7 +6,7 @@
   <nav class="navbarEccad" data-ng-controller="menuCtrl">
         <div class="menuEccad">
             <div>
-                <ul class="menuEccadUl">
+                <ul class="nav nav-tabs">
                     <li class="menuItemEccad" v-bind:key="link.menu"  v-for="link in links">
                          <div class="menu" @click="change(link)">{{ link.text }}</div>
                     </li>
