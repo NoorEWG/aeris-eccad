@@ -25,7 +25,7 @@
 				</ul>
 			</div>
         	<div>
-				<span class="overviewTitle">Species</span> 
+				<span class="overviewTitle">Parameters</span> 
 				<span class="eccadBadge" v-if="selectedSpeciesIds.length < 1 && species.length >= selectedSpeciesIds.length && !noSpecies">{{species.length}}</span>
 				<span class="eccadBadge" v-if="selectedSpeciesIds.length >= 1 || (selectedSpeciesIds.length < 1 && noSpecies)">{{selectedSpeciesIds.length}}</span>
 				<ul class="overviewListML">
@@ -46,23 +46,22 @@
 				<span class="overviewTitle">Datasets</span>
 				<span class="eccadBadge" v-if="selectedDatasetIds.length < 1 && inventories.length >= selectedDatasetIds.length">{{inventories.length}}</span>
 				<span class="eccadBadge" v-if="selectedDatasetIds.length >= 1">{{selectedDatasetIds.length}}</span>
-				<ul class="overviewListL">
+				<ul class="overviewListML">
 					<li  :class="datasetClass(dataset)"
 						v-for="dataset in inventories"
 						v-on:click="datasetChanged(dataset)">{{dataset.titre}}</li>
 				</ul>
-			</div>
-			<div>
 				<span class="overviewTitle">Scenarios</span> 
 				<span class="eccadBadge" v-if="selectedScenarioIds.length < 1 && scenarios.length >= selectedScenarioIds.length && !noScenarios">{{scenarios.length}}</span>
 				<span class="eccadBadge" v-if="selectedScenarioIds.length >= 1 || (selectedScenarioIds.length < 1 && noScenarios)">{{selectedScenarioIds.length}}</span>
-				<ul class="overviewListM">
+				<ul class="overviewList">
 					<li :class="scenarioClass(scenario)"
 						v-for="scenario in scenarios"
 						v-on:click="scenarioChanged(scenario)">{{scenario.displayNameScenario}}</li>
 				</ul>
 				
-			
+			</div>
+			<div>
 				<span class="overviewTitle" hidden>Geographical</span>
 				<ul class="overviewListL" hidden>
 				<li :class="geoClass(1)"
@@ -70,15 +69,7 @@
 				<li :class="geoClass(2)"
 					v-on:click="geoChanged(2)" hidden>Regional</li>	
 				</ul>
-		
 				
-				<div>
-					<span class="overviewTitle">Temporal</span>
-					<!--rzslider rz-slider-model="slider.minValue"
-						rz-slider-high="slider.maxValue"
-						rz-slider-options="slider.options"></rzslider-->
-					<vue-slider ref="slider" :min="slider.minValue" :max="slider.maxValue" v-model="value"></vue-slider>	
-				</div>
 				<span class="overviewTitle">Resolutions</span>		
 				<span class="eccadBadge" v-if="selectedResolutionIds.length < 1 && resolutions.length >= selectedResolutionIds.length">{{resolutions.length}}</span>
 				<span class="eccadBadge" v-if="selectedResolutionIds.length >= 1">{{selectedResolutionIds.length}}</span>
@@ -87,6 +78,15 @@
 						v-for="resolution in resolutions"
 						v-on:click="resolutionChanged(resolution)">{{resolution.fullNameResolution}}</li>
 				</ul>
+				
+				<div>
+					<span class="overviewTitle">Temporal</span>
+					<!--rzslider rz-slider-model="slider.minValue"
+						rz-slider-high="slider.maxValue"
+						rz-slider-options="slider.options"></rzslider-->
+					<vue-slider ref="slider" :min="slider.minValue" :max="slider.maxValue" v-model="value"></vue-slider>	
+				</div>
+				
 				<span class="overviewTitle">Geospatial</span> 
 				<span class="eccadBadge" v-if="selectedGeospatialIds.length < 1">{{geospatials.length}}</span>
 				<span class="eccadBadge" v-if="selectedGeospatialIds.length >= 1">{{selectedGeospatialIds.length}}</span>
@@ -174,10 +174,14 @@ export default {
 			this.scenarios = JSON.parse(data);
 		});	
 		EventBus.$on('allSpecies', data => {
-			this.species = JSON.parse(data);
+			var species = JSON.parse(data);
+			// order by name
+			this.species =  _.orderBy(species, 'shortName');
 		});
 		EventBus.$on('allInventories', data => {
-			this.inventories = JSON.parse(data);
+			var inventories = JSON.parse(data);
+			// order by name
+			this.inventories = _.orderBy(inventories, 'titre');
 		});	
 		EventBus.$on('allSpeciesGroups', data => {
 			this.speciesGroups = JSON.parse(data);

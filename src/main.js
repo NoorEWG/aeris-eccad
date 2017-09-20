@@ -15,6 +15,14 @@ Vue.use(VueResource);
 import VeeValidate from 'vee-validate';
 Vue.use(VeeValidate);
 
+import * as VueGoogleMaps from 'vue2-google-maps'
+Vue.use(VueGoogleMaps, {
+  load: {
+    key: 'AIzaSyDZ0hIZWHMfwK4eyn6uqNi7X-40NNDxBZU',
+    libraries: 'places',    
+  }
+});
+
 export const EventBus = new Vue();
 
 import AerisEccadCategory from './aeris-eccad-listbox/aeris-eccad-category/aeris-eccad-category.vue'
@@ -58,8 +66,7 @@ import AerisEccadLogin from './aeris-eccad-login/aeris-eccad-login.vue'
 import AerisEccadSpecies from './aeris-eccad-species/aeris-eccad-species.vue'
 import AerisEccadCatalogSector from './aeris-eccad-catalog-sector/aeris-eccad-catalog-sector.vue'
 import AerisEccadCatalogScenario from './aeris-eccad-catalog-scenario/aeris-eccad-catalog-scenario.vue'
-
-
+import AerisEccadGeoMap from './aeris-eccad-map/aeris-eccad-geo-map.vue'
 import AerisEccadSelection from './aeris-eccad-selection/aeris-eccad-selection.vue'
 import AerisEccadApp from './aeris-eccad-app/aeris-eccad-app.vue'
 
@@ -104,6 +111,7 @@ Vue.customElement('aeris-eccad-login',AerisEccadLogin);
 Vue.customElement('aeris-eccad-species',AerisEccadSpecies);
 Vue.customElement('aeris-eccad-catalog-sector',AerisEccadCatalogSector);
 Vue.customElement('aeris-eccad-catalog-scenario',AerisEccadCatalogScenario);
+Vue.customElement('aeris-eccad-geo-map',AerisEccadGeoMap);
 
 
 Vue.customElement('aeris-eccad-selection',AerisEccadSelection);

@@ -12,7 +12,7 @@
     <div>
       <aeris-eccad-mainmenu></aeris-eccad-mainmenu>
     </div>  
-    
+
     <div v-show="!auth && toolsMenu || loginForm">
       <aeris-eccad-login></aeris-eccad-login>  
     </div>
@@ -98,6 +98,11 @@
       <aeris-eccad-download></aeris-eccad-download>
     </div>
 
+    <div v-show="home">
+      <aeris-eccad-geo-map></aeris-eccad-geo-map>
+    </div>
+    
+
   </span> 
 </template>
 
@@ -125,6 +130,7 @@ export default {
        selectionBar: false,
        toolsMenu: false,
        catalogMenu: false,
+       home: true,
        loginForm: false,
     }    
   },
@@ -136,19 +142,28 @@ export default {
         this.selectionBar = true;
         this.toolsMenu = true;
         this.catalogMenu = false;
+        this.home = false;
       } else if (value === 'catalog') {
         this.selectionBar = false;
         this.toolsMenu = false;
         this.catalogMenu = true;
+         this.home = false;
       } 
       else if (value === 'admin') {
         this.selectionBar = false;
         this.toolsMenu = false;
         this.catalogMenu = false;
+        this.home = false;
+      } else if (value === 'home') {
+        this.selectionBar = false;
+        this.toolsMenu = false;
+        this.catalogMenu = false;
+        this.home = true;  
       }else {
         this.selectionBar = false;
         this.toolsMenu = false;
         this.catalogMenu = false;
+        this.home = false;
       }
     }
   },
