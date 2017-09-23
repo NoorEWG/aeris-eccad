@@ -3,7 +3,7 @@ var webpack = require("webpack");
 module.exports = {
    entry: './src/main.js',
   output: {
-    path: '',
+    path: 'C:\\Users\\François ANDRE\\workspaceWordpress\\aeris-commons-vue-components\\dist',
     publicPath: 'dist/',
     filename: 'build.js'
   },

@@ -17,7 +17,6 @@
 </template>
 
 <script>
-import { EventBus } from '../../aeris-event-bus/aeris-event-bus.js';
 export default {
   props: {
     service: {
@@ -42,8 +41,8 @@ export default {
     return {
         categoryService: this.service,
         premier: this.first,
-    	categories: {type: Array},
-    	selectedCategory: {type: Object}
+    	  categories: {type: Array},
+    	  selectedCategory: {type: Object}
     }
   },
   
@@ -55,16 +54,20 @@ export default {
     selectedCategory (value) {
     	  
         if(this.premier && !this.ets && !this.its) {
-    	    EventBus.$emit('category', JSON.stringify(value));
+    	    var ev1 = new CustomEvent('category', { 'detail': value });
+          document.dispatchEvent(ev1); 
     	  }
     	  if(!this.premier) {
-    	    EventBus.$emit('category2', JSON.stringify(value));
+          var ev2 = new CustomEvent('category2', { 'detail': value });
+          document.dispatchEvent(ev2); 
     	  }
         if (this.ets) {
-          EventBus.$emit('etCategory', JSON.stringify(value));
+          var ev3 = new CustomEvent('etCategory', { 'detail': value });
+          document.dispatchEvent(ev3); 
     	  }
         if (this.its) {
-          EventBus.$emit('itCategory', JSON.stringify(value));
+          var ev4 = new CustomEvent('itCategory', { 'detail': value });
+          document.dispatchEvent(ev4); 
     	  }
     }
     
@@ -77,13 +80,7 @@ export default {
    updated: function() {
   },
   
-  destroyed: function() {
-    if(this.premier) {
-  	  EventBus.$off('category', {});
-  	} 
-  	else {
-  	  EventBus.$off('category2', {});
-  	}   
+  destroyed: function() { 
   },
   
   created: function () {
@@ -91,36 +88,39 @@ export default {
    // EventBus.$on('theme', this.handleTheme)
   },
   
- 
-  
   computed: {
   },
   
   methods: {
   
-  refresh: function() {
-  	   if (this.categoryService) {
-   	   this.$http.get(this.categoryService).then((response)=>{this.handleSuccess(response)},(response)=>{this.handleError(response)});
-   	   }
-   },
-      
-  handleSuccess : function(response) {
-        this.categories = response.data;
-        this.selectedCategory = this.categories[0];
-        var tempCategories = JSON.stringify(this.categories);
-        EventBus.$emit('categories', tempCategories);
-  },
-  handleError: function(response) {
-  		console.log("Aeris-Eccad-Category - Error while accessing server:"); 
-        var error = response.status;
-        var message = response.statusText;
-        if(!error) message = 'Can\'t connect to the server';
-        console.log('Error ' + error + ': ' + message);
- },
- capitalizeFirstLetter: function(string) {
-    return string.charAt(0).toUpperCase() + string.slice(1);
- }
-    
+    refresh: function() {
+        if (this.categoryService) {
+        this.$http.get(this.categoryService).then((response)=>{this.handleSuccess(response)},(response)=>{this.handleError(response)});
+        }
+    },
+        
+    handleSuccess : function(response) {
+      var categories = response.data;
+      for(var i = 0; i < categories.length; i++) {
+        categories[i].fullName = this.capitalizeFirstLetter(categories[i].fullName)
+      }
+      this.categories = categories;
+      this.selectedCategory = this.categories[0];
+      var ev5 = new CustomEvent('categories', { 'detail': response.data });
+      document.dispatchEvent(ev5); 
+    },
+
+    handleError: function(response) {
+      console.log("Aeris-Eccad-Category - Error while accessing server:"); 
+      var error = response.status;
+      var message = response.statusText;
+      if(!error) message = 'Can\'t connect to the server';
+      console.log('Error ' + error + ': ' + message);
+    },
+
+    capitalizeFirstLetter: function(string) {
+      return string.charAt(0).toUpperCase() + string.slice(1);
+    }
   }
 }
 </script>

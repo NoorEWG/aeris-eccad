@@ -17,7 +17,6 @@
 </template>
 
 <script>
-import { EventBus } from '../../aeris-event-bus/aeris-event-bus.js';
 export default {
   props: {
     service: {
@@ -35,7 +34,6 @@ export default {
       resolutionService: this.service,
     	resolutions: {type: Array},
     	selectedResolution: {type: Object},
-    	premier: this.first,
     	dataset: {type: Object},
     	isGeo: false
     }
@@ -52,11 +50,13 @@ export default {
     },
     selectedResolution (value) {
       if(value != null) {
-        if(this.premier) {
-          EventBus.$emit('resolution', JSON.stringify(value));
+        if(this.first) {
+          var ev1 = new CustomEvent('resolution', { 'detail': value });
+          document.dispatchEvent(ev1); 
         }
         else {
-          EventBus.$emit('resolution2', JSON.stringify(value));
+           var ev2 = new CustomEvent('resolution2', { 'detail': value });
+          document.dispatchEvent(ev2); 
         }
       }	  
     }
@@ -70,32 +70,35 @@ export default {
   },
   
   destroyed: function() {
-    if(this.premier) {
-  	  EventBus.$off('resolution', {});
-  	}
-  	else {
-  	  EventBus.$off('resolution2', {});
-  	}
+    document.removeEventListener('dataset', this.setDataset);
+    document.removeEventListener('dataset2', this.setDataset2);
   },
   
   created: function () {
     console.log("Aeris Eccad Resolution - Creating");
-    if(this.premier) {
-	    EventBus.$on('dataset', data => {
-		   this.dataset = JSON.parse(data);
-		  });
-	  } 
-	  else {
-		  EventBus.$on('dataset2', data => {
-		    this.dataset = JSON.parse(data);
-		  });
-	  }
+    document.addEventListener('dataset', this.setDataset);
+    document.addEventListener('dataset2', this.setDataset2);
   },
   
   computed: {
   },
   
   methods: {
+
+     setDataset: function(evt) {
+       if(this.first) {
+        this.dataset = evt.detail;
+       }  
+    },
+
+    setDataset2: function(evt) {
+       if(!this.first) {
+        this.dataset = evt.detail;
+       }  
+	   if(this.compare) {
+		this.dataset = evt.detail;
+	   }
+    },
   
   refresh: function() {
   	   if (this.resolutionService && this.dataset && this.dataset.id) {
@@ -108,12 +111,14 @@ export default {
     this.resolutions = response.data;
     if(this.resolutions.length > 0) {
       this.selectedResolution = this.resolutions[0];
-      if(this.premier) {
-        EventBus.$emit('resolution', JSON.stringify(value));
+      /* if(this.first) {
+        var ev3 = new CustomEvent('resolution', { 'detail': value });
+        document.dispatchEvent(ev3); 
       }
       else {
-        EventBus.$emit('resolution2', JSON.stringify(value));
-      }	  
+        var ev4 = new CustomEvent('resolution', { 'detail': value });
+        document.dispatchEvent(ev4); 
+      }	*/  
     } 
   },
   

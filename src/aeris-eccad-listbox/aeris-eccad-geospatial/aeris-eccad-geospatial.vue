@@ -17,7 +17,6 @@
 </template>
 
 <script>
-import { EventBus } from '../../aeris-event-bus/aeris-event-bus.js';
 export default {
   props: {
     service: {
@@ -35,13 +34,10 @@ export default {
   },
   
   watch: {
-    service (value) {
-	      this.geospatialService = value
-	      this.refresh();
-    },
     selectedGeospatial (value) {
       if(value) {
-        EventBus.$emit('geospatial', JSON.stringify(value));	 
+        var ev1 = new CustomEvent('geospatial', { 'detail': value });
+        document.dispatchEvent(ev1);  
       } 
     }
    },
@@ -54,14 +50,13 @@ export default {
   },
   
   destroyed: function() {
-  	EventBus.$off('geospatial', {})
+  	 document.removeEventListener('geospatials', this.setGeospatials);
   },
   
   created: function () {
     console.log("Aeris Eccad Geospatials - Creating");
-    EventBus.$on('geospatials', data => {
-      this.geospatials = JSON.parse(data);
-    });
+    document.addEventListener('geospatials', this.setGeospatials);
+    
   },
  
   computed: {
@@ -69,6 +64,10 @@ export default {
   
   methods: {
   
+    setGeospatials: function(evt) {
+      this.geospatials = evt.detail
+    },
+
     refresh: function() {
     	   if (this.geospatialService) {
   	  	   var url = this.geospatialService;

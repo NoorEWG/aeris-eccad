@@ -30,7 +30,6 @@
 </template>
 
 <script>
-import { EventBus } from '../aeris-event-bus/aeris-event-bus.js';
 export default {
   props: {
   },
@@ -65,6 +64,9 @@ export default {
   },
   
   destroyed: function() {
+    document.removeEventListener('catalogmenu', this.setLinkCatalogMenu);
+    document.removeEventListener('toolsmenu', this.setLinkToolsMenu);
+    document.removeEventListener('catGroups', this.setCategoryGroups);
   },
   
   created: function () {
@@ -80,15 +82,9 @@ export default {
     //EventBus.$on('mainmenu', data => {
     //    this.selectedLink = JSON.parse(data)
 	//});
-    EventBus.$on('catalogmenu', data => {
-        this.selectedLink = JSON.parse(data)
-	});
-    EventBus.$on('toolsmenu', data => {
-        this.selectedLink = JSON.parse(data)
-	});
-    EventBus.$on('catGroups', data => {
-        this.categoryGroups = JSON.parse(data)
-	});
+    document.addEventListener('catalogmenu', this.setLinkCatalogMenu);
+    document.addEventListener('toolsmenu', this.setLinkToolsMenu);
+    document.addEventListener('catGroups', this.setCategoryGroups);
 
   },
   
@@ -97,8 +93,22 @@ export default {
   
   methods: {
     
+    setLinkCatalogMenu: function(evt) {
+        this.selectedLink = evt.detail;
+    },
+    
+    setLinkToolsMenu: function(evt) {
+        this.selectedLink = evt.detail;
+    },
+    
+    setCategoryGroups: function(evt) {
+        this.categoryGroups = evt.detail;
+    },
+    
     change: function(menu) {
-        EventBus.$emit('mainmenu', JSON.stringify(menu))
+        
+        var ev1 = new CustomEvent('mainmenu', { 'detail': menu});
+        document.dispatchEvent(ev1); 
         if(menu === 'catalog') {
            this.showCategories = true;
         }
@@ -109,12 +119,14 @@ export default {
     },
 
     changeCategoryGroup: function() {
-      EventBus.$emit('categorygroup', JSON.stringify(this.categoryGroup));
+        var ev2 = new CustomEvent('categoryGroup', { 'detail': this.categoryGroup });
+        document.dispatchEvent(ev2);   
     },
 
     hideHeader: function(bool) {
         this.hideheader = bool;
-        EventBus.$emit('hideMainHeader', JSON.stringify(bool));
+        var ev3 = new CustomEvent('hideMainHeader', { 'detail': bool });
+        document.dispatchEvent(ev3); 
     }  
   }
 }

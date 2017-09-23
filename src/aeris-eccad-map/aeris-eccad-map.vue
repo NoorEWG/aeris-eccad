@@ -40,9 +40,6 @@
 </template>
 
 <script>
-
-import { EventBus } from '../aeris-event-bus/aeris-event-bus.js';
-
 export default {
   props: {
     service:  {
@@ -114,6 +111,8 @@ export default {
 	   chartId: this.name + "TimeSeries",
 	   parameter2: {},
 	   datatype2: {},
+	   parameterName: '',
+	   parameterName2: '',
        dataset2: {},
        sector2: {},
        sectorName2: String,
@@ -140,25 +139,7 @@ export default {
   },
   
    watch: {
-    service (value) {
-	  this.mapService = value
-    },
-    file (value) {
-      this.getGrids();
-    },
-    sector (value) {
-	  if(value.name) {	
-      this.getGrids();
-	  }
-    },
-    sectorName (value) {
-      if(value) {
-	  	this.getGrids();
-	  }
-    },
-    parameter (value) {
-      this.getGrids();
-    },
+   
 	isTotal (value) {
       this.getGrids();
     },
@@ -205,210 +186,266 @@ export default {
   
   created: function () {
 	this.drawBaseMap();  
-    EventBus.$on('useMask', data => {
-		this.useMask = data;
-	});
-	EventBus.$on('mainmenu', data => {
-		this.mainmenu = data;
-	});
-	EventBus.$on('isMask', data => {
-		this.isMask = JSON.parse(data);
-	});
-	EventBus.$on('mapCoordinates', data => {
-		var mapCoordinates = JSON.parse(data);
-		this.lon = mapCoordinates.lon;
-		this.lat = mapCoordinates.lat;
-		this.setTimeSeries(this.lon, this.lat);
-	});
-	EventBus.$on('geospatial', data => {
-		this.geospatial = JSON.parse(data);
-		this.geospatial2 = JSON.parse(data);
-	});
-
-    if(this.first && !this.compare) {
-      	EventBus.$on('isTotal', data => {
-			this.isTotal = JSON.parse(data);
-		});
-		EventBus.$on('dataset', data => {
-	    	this.dataset = JSON.parse(data);
-	  	});
-		EventBus.$on('datatype', data => {
-			console.log("datatype: " + data)
-			this.datatype = JSON.parse(data);
-		});
-		EventBus.$on('parameter', data => {
-			this.parameter = JSON.parse(data);
-			this.parameterName = this.parameter.displayName;
-		});
-		EventBus.$on('sector', data => {
-			this.sector = JSON.parse(data);
-		});
-		EventBus.$on('sectorname', data => {
-			this.sectorName = JSON.parse(data);
-		});
-		EventBus.$on('scenario', data => {
-			this.scenario = JSON.parse(data);
-		});
-		EventBus.$on('unit', data => {
-			this.unit = JSON.parse(data);
-		});
-		EventBus.$on('file', data => {
-			this.file = JSON.parse(data);
-		});
-		EventBus.$on('resolution', data => {
-	    	this.resolution = JSON.parse(data);
-	  	});
-		EventBus.$on('beginDate', data => {
-			this.beginDate = JSON.parse(data);
-		});
-		EventBus.$on('parameterName', data => {
-			console.log("MAP, parameterName: " + data)
-			this.parameterName = JSON.parse(data);
-		});
-		
-    }
-    
-	if (!this.first && !this.compare) {
-     	EventBus.$on('isTotal2', data => {
-			this.isTotal = JSON.parse(data);
-		});
-		EventBus.$on('dataset2', data => {
-		   this.dataset = JSON.parse(data);
-		});
-		EventBus.$on('datatype2', data => {
-		   this.datatype2 = JSON.parse(data);
-		});
-		EventBus.$on('parameter2', data => {
-		   this.parameter = JSON.parse(data);
-		   this.parameterName = this.parameter.displayName;
-		});	
-		EventBus.$on('sector2', data => {
-		   this.sector = JSON.parse(data);
-		});
-		EventBus.$on('sectorname2', data => {
-		   this.sectorName = JSON.parse(data);
-		});
-		EventBus.$on('scenario2', data => {
-		   this.scenario = JSON.parse(data);
-		});
-		EventBus.$on('unit2', data => {
-		   this.unit = JSON.parse(data);
-		});
-		EventBus.$on('file2', data => {
-		   this.file = JSON.parse(data);
-		});
-		EventBus.$on('resolution2', data => {
-	    	this.resolution = JSON.parse(data);
-	  	});
-        EventBus.$on('beginDate2', data => {
-		   this.beginDate = JSON.parse(data);
-		});
-		EventBus.$on('parameterName2', data => {
-			this.parameterName = JSON.parse(data);
-		});
-
-    }
-    if(this.compare) {
-        EventBus.$on('geospatial', data => {
-			this.geospatial = JSON.parse(data);
-			this.geospatial2 = JSON.parse(data);
-		});
-		     	EventBus.$on('isTotal2', data => {
-			this.isTotal = JSON.parse(data);
-		});
-
-		 	EventBus.$on('isTotal', data => {
-			this.isTotal = JSON.parse(data);
-		});
-		EventBus.$on('dataset', data => {
-	    	this.dataset = JSON.parse(data);
-	  	});
-		EventBus.$on('datatype', data => {
-			this.datatype = JSON.parse(data);
-		});
-		EventBus.$on('parameter', data => {
-			this.parameter = JSON.parse(data);
-			this.parameterName = this.parameter.displayName;
-		});
-		EventBus.$on('sector', data => {
-			this.sector = JSON.parse(data);
-		});
-		EventBus.$on('sectorname', data => {
-			this.sectorName = JSON.parse(data);
-		});
-		EventBus.$on('scenario', data => {
-			this.scenario = JSON.parse(data);
-		});
-		EventBus.$on('unit', data => {
-			this.unit = JSON.parse(data);
-		});
-		EventBus.$on('file', data => {
-			this.file = JSON.parse(data);
-		});
-		EventBus.$on('resolution', data => {
-	    	this.resolution = JSON.parse(data);
-	  	});
-		EventBus.$on('beginDate', data => {
-			this.beginDate = JSON.parse(data);
-		});
-		EventBus.$on('parameterName', data => {
-			console.log("MAP, parameterName: " + data)
-			this.parameterName = JSON.parse(data);
-		});
-
-
-		EventBus.$on('dataset2', data => {
-		   this.dataset2 = JSON.parse(data);
-		});
-		EventBus.$on('datatype2', data => {
-		   this.datatype2 = JSON.parse(data);
-		});
-		EventBus.$on('parameter2', data => {
-		   this.parameter2 = JSON.parse(data);
-		   this.parameterName2 = this.parameter.displayName;
-		});	
-		EventBus.$on('sector2', data => {
-		   this.sector2 = JSON.parse(data);
-		});
-		EventBus.$on('sectorname2', data => {
-		   this.sectorName2 = JSON.parse(data);
-		});
-		EventBus.$on('scenario2', data => {
-		   this.scenario2 = JSON.parse(data);
-		});
-		EventBus.$on('unit2', data => {
-		   this.unit2 = JSON.parse(data);
-		});
-		EventBus.$on('file2', data => {
-		   this.file2 = JSON.parse(data);
-		});
-		EventBus.$on('resolution2', data => {
-	    	this.resolution2 = JSON.parse(data);
-	  	});
-        EventBus.$on('beginDate2', data => {
-		   this.beginDate2 = JSON.parse(data);
-		});
-		EventBus.$on('parameterName2', data => {
-			this.parameterName2 = JSON.parse(data);
-		});
-		EventBus.$on('beginDateIndex', data => {
-		   this.beginDateIndex = JSON.parse(data);
-		});
-		EventBus.$on('beginDateIndex2', data => {
-		   this.beginDateIndex2 = JSON.parse(data);
-		});
-		EventBus.$on('mapcompare', data => {
-			this.getCompareParams();
-		});
-
-    }  
-	
-   // EventBus.$on('mapParameters', this.draw());
-   // EventBus.$on('regionParameters', this.draw());
-    
+	document.addEventListener('parameter', this.setUseMap);
+	document.addEventListener('mainmenu', this.setMainMenu);
+	document.addEventListener('isMask', this.setMask);
+	document.addEventListener('mapCoordinates', this.setMapCoordinates);
+	document.addEventListener('geospatial', this.setGeoSpatial);
+	document.addEventListener('isTotal', this.setTotal);
+	document.addEventListener('isTotal2', this.setTotal2);
+	document.addEventListener('category', this.setCategory);
+    document.addEventListener('category2', this.setCategory2);
+    document.addEventListener('parameter', this.setParameter);
+    document.addEventListener('parameter2', this.setParameter2);
+    document.addEventListener('dataset', this.setDataset);
+    document.addEventListener('dataset2', this.setDataset2);
+	document.addEventListener('sector', this.setSector);
+    document.addEventListener('sector2', this.setSector2);
+	document.addEventListener('scenario', this.setScenario);
+    document.addEventListener('scenario2', this.setScenario2);
+	document.addEventListener('sectorname', this.setSectorName);
+    document.addEventListener('sectorname2', this.setSectorName2);
+	document.addEventListener('unit', this.setUnit);
+    document.addEventListener('unit2', this.setUnit2);
+	document.addEventListener('file', this.setFile);
+    document.addEventListener('file2', this.setFile2);
+	document.addEventListener('resolution', this.setResolution);
+    document.addEventListener('resolution2', this.setResolution2);	
+    document.addEventListener('beginDate', this.setBeginDate);
+    document.addEventListener('beginDate2', this.setBeginDate2);
+	document.addEventListener('beginDateIndex', this.setBeginDateIndex);
+    document.addEventListener('beginDateIndex2', this.setBeginDateIndex2);
+	document.addEventListener('parameterName', this.setParameterName);
+    document.addEventListener('parameterName2', this.setParameterName2);
   },
   
   methods: {
+
+    setCategory: function(evt) {
+       if(this.first) {
+        this.datatype = evt.detail;
+       }  
+    },
+
+    setCategory2: function(evt) {
+       if(!this.first) {
+        this.datatype = evt.detail;
+       }  
+	   if(this.compare) {
+		this.datatype2 = evt.detail;
+	   }
+    },
+
+    setParameter: function(evt) {
+	  if(this.first) {
+        this.parameter = evt.detail;
+      } 
+     },
+
+    setParameter2: function(evt) {
+       if(!this.first) {
+        this.parameter = evt.detail;
+       }
+	   if(this.compare) {
+		this.parameter2 = evt.detail;
+	   }  
+    },
+
+    setDataset: function(evt) {
+       if(this.first) {
+        this.dataset = evt.detail;
+       }  
+    },
+
+    setDataset2: function(evt) {
+       if(!this.first) {
+        this.dataset = evt.detail;
+       }  
+	   if(this.compare) {
+		this.dataset = evt.detail;
+	   }
+    },
+
+	setScenario: function(evt) {
+       if(this.first) {
+        this.scenario = evt.detail;
+       }  
+    },
+
+	setScenario2: function(evt) {
+       if(!this.first) {
+        this.scenario = evt.detail;
+       }
+	   if(this.compare) {
+		this.scenario2 = evt.detail;
+	   }  
+    },
+
+	setSector: function(evt) {
+       if(this.first) {
+        this.sector = evt.detail;
+       }  
+    },
+	setSector2: function(evt) {
+       if(!this.first) {
+        this.sector = evt.detail;
+       }  
+	   if(this.compare) {
+		this.sector2 = evt.detail;
+	   }
+    },
+
+	setSectorName: function(evt) {
+       if(this.first) {
+        this.sectorname = evt.detail;
+       }  
+	  
+    },
+
+	setSectorName2: function(evt) {
+       if(!this.first) {
+        this.sectorname = evt.detail;
+       }  
+	   if(this.compare) {
+		this.sectorname2 = evt.detail;
+	   }
+    },
+
+	setUnit: function(evt) {
+       if(this.first) {
+        this.unit = evt.detail;
+       }  
+    },
+
+	setUnit2: function(evt) {
+       if(!this.first) {
+        this.unit = evt.detail;
+       }
+	   if(this.compare) {
+		this.unit2 = evt.detail;
+	   }  
+    },
+
+	setFile: function(evt) {
+       if(this.first) {
+        this.file = evt.detail;
+		this.getGrids();
+       }  
+    },
+
+	setFile2: function(evt) {
+       if(!this.first) {
+        this.file = evt.detail;
+		this.getGrids();
+       }  
+	   if(this.compare) {
+		this.file2 = evt.detail;
+	   }
+    },
+
+	setResolution: function(evt) {
+       if(this.first) {
+        this.resolution = evt.detail;
+       }  
+    },
+
+	setResolution2: function(evt) {
+       if(!this.first) {
+        this.resolution = evt.detail;
+       }  
+	   if(this.compare) {
+		this.resolution2 = evt.detail;
+	   }
+    },
+
+	setBeginDate: function(evt) {
+       if(this.first) {
+        this.beginDate = evt.detail;
+       }  
+    },
+
+	setBeginDate2: function(evt) {
+       if(!this.first) {
+        this.beginDate = evt.detail;
+       }  
+	   if(this.compare) {
+		this.beginDate2 = evt.detail;
+	   }
+    },
+
+	setParameterName: function(evt) {
+	   if(this.first) {
+		console.log("PARAM NAME: " + JSON.stringify(evt.detail))   
+        this.parameterName = evt.detail;
+		this.getGrids();
+       }  
+    },
+
+	setParameterName2: function(evt) {
+	   if(!this.first) {
+		console.log("PARAM NAME 2: " + JSON.stringify(evt.detail))   
+        this.parameterName = evt.detail;
+		this.getGrids();
+       }  
+	   if(this.compare) {
+		this.parameterName2 = evt.detail;
+	   }
+    },
+
+	setBeginDateIndex: function(evt) {
+		if(this.compare) {
+			this.beginDateIndex = evt.detail;
+		}
+	},
+
+	setBeginDateIndex2: function(evt) { 
+	   if(this.compare) {
+		this.setBeginDateIndex2 = evt.detail;
+	   }
+    },
+
+	setTotal: function(evt) { 
+		if(this.first) {
+        this.isTotal = evt.detail;
+       } 
+	},   
+
+	setTotal2: function(evt) { 
+		if(!this.first) {
+        this.isTotal = evt.detail;
+       }  
+	   if(this.compare) {
+		this.isTotal2 = evt.detail;
+	   }
+	},
+
+    setUseMask: function(evt) {  
+		this.useMask = evt.detail;
+	},
+
+	setMainMenu: function(evt) {  
+		this.mainmenu = evt.detail;
+	},
+
+	setMask: function(evt) {  
+		this.isMask = evt.detail;
+	},
+	
+	setMapCoordinates: function(evt) {  
+		var mapCoordinates = evt.detail;
+		this.lon = mapCoordinates.lon;
+		this.lat = mapCoordinates.lat;
+		this.setTimeSeries(this.lon, this.lat);
+	},
+
+	setGeospatial: function(evt) {  
+		this.geospatial = evt.detail;
+		this.geospatial2 = evt.detail;
+	},	
+
+	setMapCompare: function(evt) {
+		this.getCompareParams();
+	},
 
     getCompareParams: function() {
 		if(this.file && this.file[0] && this.file2 && this.file2[0]) {
@@ -491,14 +528,15 @@ export default {
 
     getGrids: function() {
      
-      if(this.file && this.file[0] && this.file[0].id && this.sector && this.sector.id && this.parameterName) {    
+	console.log("GET GRIDS " + JSON.stringify(this.file) + " / " + JSON.stringify(this.sector) + " / " + JSON.stringify(this.parameterName));  
+   	
+      if(this.file && this.file[0] && this.file[0].id && this.sector && this.sector.id && this.parameter && this.parameterName) {    
         this.grids = [];
         this.mapParams = {};
         this.$http.get("http://eccad.aeris-data.fr/eccad2web/rest/data/grids?fileid=" + this.file[0].id + "&param=" + this.parameterName + "&mask=" + this.useMask + "&total=" + this.isTotal + "&sectorid=" + this.sector.id)
             .then(function(result){
 
             this.grids = result.data;
-            
             // min max selection bar
             var min = this.grids[0].minGrid.toPrecision(4).toUpperCase();
             var max = this.grids[0].maxGrid.toPrecision(4).toUpperCase();
@@ -532,18 +570,28 @@ export default {
             this.mapParams.boundingBox = {latMin: -180, latMax: 180, lonMin: -90, lonMax: 90};
 
             if(this.first && !this.mapcompare) {
-				EventBus.$emit('beginDates', JSON.stringify(beginDates));
-				EventBus.$emit('endDates', JSON.stringify(beginDates));
-				EventBus.$emit('mapParams', JSON.stringify(this.mapParams));
-				EventBus.$emit('min', JSON.stringify(min));
-				EventBus.$emit('max', JSON.stringify(max));
+				var ev1 = new CustomEvent('beginDates', { 'detail': beginDates });
+        		document.dispatchEvent(ev1); 
+				var ev2 = new CustomEvent('endDates', { 'detail': beginDates });
+        		document.dispatchEvent(ev2); 
+				var ev3 = new CustomEvent('mapParams', { 'detail': this.mapParams });
+        		document.dispatchEvent(ev3); 
+				var ev4 = new CustomEvent('min', { 'detail': min });
+        		document.dispatchEvent(ev4); 
+				var ev5 = new CustomEvent('max', { 'detail': max });
+        		document.dispatchEvent(ev5); 
           	}
           	if(!this.first && !this.mapcompare) {
-				EventBus.$emit('beginDates2', JSON.stringify(beginDates));
-				EventBus.$emit('endDates2', JSON.stringify(beginDates));
-				EventBus.$emit('mapParams2', JSON.stringify(beginDates));    
-				EventBus.$emit('min2', JSON.stringify(min));
-				EventBus.$emit('max2', JSON.stringify(max));
+				var ev1 = new CustomEvent('beginDates2', { 'detail': beginDates });
+        		document.dispatchEvent(ev1); 
+				var ev2 = new CustomEvent('endDates2', { 'detail': beginDates });
+        		document.dispatchEvent(ev2); 
+				var ev3 = new CustomEvent('mapParams2', { 'detail': this.mapParams });
+        		document.dispatchEvent(ev3); 
+				var ev4 = new CustomEvent('min2', { 'detail': min });
+        		document.dispatchEvent(ev4); 
+				var ev5 = new CustomEvent('max2', { 'detail': max });
+        		document.dispatchEvent(ev5); 
 		  	}
           	this.draw(); 
 		  	this.getLegend();
@@ -551,7 +599,7 @@ export default {
         });
       } 
 	  else {
-		this.draw();
+		// TODO: empty map
 	  }
     },  
 
@@ -650,7 +698,7 @@ export default {
 	  }
 	  else {
 		// color range and logscale: todo  
-		if (this.mapService && this.sectorName && this.file && this.file[0].name && this.beginDate) {	    
+		if (this.mapService && this.sectorName && this.file && this.file[0].name && this.beginDate && this.beginDate.date) {	    
 			fileName = this.file[0].name;
 			params = {
 				'FORMAT' : 'image/png',
@@ -773,6 +821,7 @@ export default {
 			});	
 		}
 
+		
 		var map = new ol.Map({
                     target: this.name,
                     controls: ol.control.defaults().extend([
@@ -780,6 +829,7 @@ export default {
                     ])
         		}); 
               
+		
 		map.addLayer(overlayGroup);
 		map.addControl(mousePosition);
 		map.setView(view);
@@ -789,6 +839,7 @@ export default {
 			var mapCoordinates = {lon: evt.coordinate[0], lat: evt.coordinate[1] }
 			EventBus.$emit("mapCoordinates", JSON.stringify(mapCoordinates));
 			});	
+			
          
 	},
 	 
@@ -876,7 +927,7 @@ export default {
 				this.timeSeriesSeries[0].series.push({name: "series", data: series});
 				this.timeSeriesSeries[0].categories = categories;
 	            // transform into highchartsmap and put in a modalform
-	        	console.log(JSON.stringify(this.timeSeriesSeries));
+	        	// console.log(JSON.stringify(this.timeSeriesSeries));
 	            this.drawTimeSeries();
 	  
 	        });          

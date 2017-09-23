@@ -17,7 +17,6 @@
 </template>
 
 <script>
-import { EventBus } from '../../aeris-event-bus/aeris-event-bus.js';
 export default {
   props: {
     service: {
@@ -44,13 +43,10 @@ export default {
   },
   
   watch: {
-    service (value) {
-	      this.maskService = value
-	      this.refresh();
-    },
     selectedMask (value) {
       if(value) {
-        EventBus.$emit('mask', JSON.stringify(value));	 
+        var ev1 = new CustomEvent('mask', { 'detail': value });
+        document.dispatchEvent(ev1); 
       } 
     }
    },
@@ -59,33 +55,26 @@ export default {
    this.refresh(); 
   },
   
-   updated: function() {
+  updated: function() {
   },
   
   destroyed: function() {
-  	EventBus.$off('mask', {})
+  	document.removeEventListener('category', this.setCategory);
+    document.removeEventListener('category2', this.setCategory2);
+    document.removeEventListener('parameter', this.setParameter);
+    document.removeEventListener('parameter2', this.setParameter2);
+    document.removeEventListener('dataset', this.setDataset);
+    document.removeEventListener('dataset2', this.setDataset2);
   },
   
   created: function () {
     console.log("Aeris Eccad Masks - Creating");
-    EventBus.$on('dataset', data => {
-	    this.dataset = JSON.parse(data);
-	  });
-		EventBus.$on('category', data => {
-			this.datatype = JSON.parse(data);
-		});
-		EventBus.$on('parameter', data => {
-			this.parameter = JSON.parse(data);
-		});
-    EventBus.$on('dataset2', data => {
-	    this.dataset2 = JSON.parse(data);
-	  });
-		EventBus.$on('category2', data => {
-			this.datatype2 = JSON.parse(data);
-		});
-		EventBus.$on('parameter2', data => {
-			this.parameter2 = JSON.parse(data);
-		});
+    document.addEventListener('category', this.setCategory);
+    document.addEventListener('category2', this.setCategory2);
+    document.addEventListener('parameter', this.setParameter);
+    document.addEventListener('parameter2', this.setParameter2);
+    document.addEventListener('dataset', this.setDataset);
+    document.addEventListener('dataset2', this.setDataset2);
 
   },
  
@@ -94,6 +83,45 @@ export default {
   
   methods: {
   
+     setCategory: function(evt) {
+       if(this.first) {
+        this.category = evt.detail;
+       }  
+    },
+
+    setCategory2: function(evt) {
+       if(!this.first) {
+        this.category = evt.detail;
+       }  
+    },
+
+    setParameter: function(evt) {
+      if(this.first && evt.detail != null) {
+        this.parameter = evt.detail;
+      } 
+     },
+
+    setParameter2: function(evt) {
+       if(!this.first) {
+        this.parameter = evt.detail;
+       }  
+    },
+
+    setDataset: function(evt) {
+       if(this.first) {
+        this.dataset = evt.detail;
+        this.refresh();
+       }  
+    },
+
+    setDataset2: function(evt) {
+       if(!this.first) {
+        this.dataset = evt.detail;
+        this.refresh();
+       }  
+    },
+
+
     refresh: function() {
     	   if (this.maskService) {
   	  	   var url = this.maskService;
@@ -106,8 +134,10 @@ export default {
       var masks = response.data;
       this.$http.get(this.eccadConfig.api + 'data/geospatial')
         .then(function(geo) {
-          EventBus.$emit('geospatials', JSON.stringify(geo.data)); 
-          EventBus.$emit('allGeospatials', JSON.stringify(geo.data)); 
+          var ev2 = new CustomEvent('geospatials', { 'detail': geo.data });
+          document.dispatchEvent(ev2); 
+          var ev3 = new CustomEvent('allGeospatials', { 'detail': geo.data });
+          document.dispatchEvent(ev3); 
           // transform the geospatials to regions for select
           geo.data.forEach(function(g) {
             var legend = {};
@@ -140,8 +170,9 @@ export default {
      changeMask: function() {
        
        console.log("MASK, selectedmask " + JSON.stringify(this.selectedMask.maskInventory))
-       EventBus.$emit('geospatials', JSON.stringify(this.selectedMask.legends));
-        if(this.selectedMask.maskParameter.displayName !== 'Select') {
+       var ev4 = new CustomEvent('geospatials', { 'detail':this.selectedMask.legends });
+       document.dispatchEvent(ev4); 
+         if(this.selectedMask.maskParameter.displayName !== 'Select') {
           var maskPrefix =  this.selectedMask.maskInventory.shortName;
           var isMask = true;
           var isTotal = true;
@@ -149,36 +180,47 @@ export default {
           var parameterId = this.selectedMask.maskParameter.id;
           //get maskfilename
           var maskFileName = this.getMaskFileName(this.selectedMask.maskParameter.id, this.datatype.id ,this.selectedMask.maskInventory.id); 
-          EventBus.$emit('parameterName', JSON.stringify(parameterName));
+          // var ev5 = new CustomEvent('parameterName', { 'detail': parameterName });
+          // document.dispatchEvent(ev5); 
           if(this.parameter2 && this.parameter2.id) {
-            EventBus.$emit('parameterName2', JSON.stringify(parameterName2));
+            // var ev6 = new CustomEvent('parameterName2', { 'detail': parameterName });
+            // document.dispatchEvent(ev6); 
           }
-          EventBus.$emit('useMask', JSON.stringify(isMask));
-          EventBus.$emit('setTotal', JSON.stringify(isTotal));
-          EventBus.$emit('maskPrefix', JSON.stringify(maskPrefix));
+          var ev7 = new CustomEvent('useMask', { 'detail': isMask });
+          document.dispatchEvent(ev7); 
+          var ev8 = new CustomEvent('setTotal', { 'detail': isTotal });
+          document.dispatchEvent(ev8); 
+          var ev9 = new CustomEvent('maskPrefix', { 'detail': maskPrefix });
+          document.dispatchEvent(ev9); 
+         
 
         }
         else {
           var maskFileName = "";
           var maskPrefix = "";
           var isMask = false;
-          EventBus.$emit('useMask', JSON.stringify(isMask));
-          EventBus.$emit('setTotal', JSON.stringify(isTotal));
-          EventBus.$emit('maskPrefix', JSON.stringify(maskPrefix));
+          var ev10 = new CustomEvent('useMask', { 'detail': isMask });
+          document.dispatchEvent(ev10); 
+          var ev11 = new CustomEvent('setTotal', { 'detail': isTotal });
+          document.dispatchEvent(ev11); 
+          var ev12 = new CustomEvent('maskPrefix', { 'detail': maskPrefix });
+          document.dispatchEvent(ev12); 
           
           if(this.parameter && this.parameter.id && this.dataset && this.dataset.id) {
             var parameterName = this.parameter.displayName;
             var parameterId = this.parameter.id;
             var tmp = this.getMaskFileName(this.parameter.id, this.datatype.id ,this.dataset.id);   
-            EventBus.$emit('parameterName', JSON.stringify(parameterName));
+            // var ev13 = new CustomEvent('parameterName', { 'detail': parameterName });
+            // document.dispatchEvent(ev13); 
           }
           if(this.parameter2 && this.parameter2.id && this.dataset2 && this.dataset2.id) {
             var parameterName2 = this.parameter2.displayName;
             var parameterId2 = this.parameter2.id;
 
             var tmp = this.getMaskFileName(this.parameter2.id, this.datatype2.id ,this.dataset2.id);   
-            EventBus.$emit('parameterName2', JSON.stringify(parameterName2));
-          }
+            // var ev14 = new CustomEvent('parameterName2', { 'detail': parameterName2 });
+            // document.dispatchEvent(ev14); 
+           }
         }
      },
 
@@ -193,11 +235,13 @@ export default {
             this.$http.get(this.eccadConfig.api + "data/files/" + netcdfs[0].id)
               .then(function (result) { 
                 var file = result.data;
-                if(this.premier) {
-                  EventBus.$emit('file', JSON.stringify(file));
+                if(this.first) {
+                  var ev15 = new CustomEvent('file', { 'detail': file });
+                  document.dispatchEvent(ev15); 
                 }
                 else {
-                  EventBus.$emit('file2', JSON.stringify(file));
+                  var ev16 = new CustomEvent('file2', { 'detail': file });
+                  document.dispatchEvent(ev16); 
                 }	     
               });
           });  

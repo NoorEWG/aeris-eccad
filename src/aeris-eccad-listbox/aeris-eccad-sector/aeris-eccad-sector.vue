@@ -17,7 +17,6 @@
 </template>
 
 <script>
-import { EventBus } from '../../aeris-event-bus/aeris-event-bus.js';
 export default {
   props: {
     service: {
@@ -36,7 +35,6 @@ export default {
     	sectors: {type: Array},
     	selectedSector: {type: Object},
     	variableNameSum: String,
-      premier: this.first,
     	dataset: {type: Object},
     	sector: {type: Object},
     	hasSector: false
@@ -44,22 +42,20 @@ export default {
   },
   
   watch: {
-    service (value) {
-	      this.scenarioService = value
-	      this.refresh();
-    },
-    dataset (value) {
-    	this.dataset = value
-    	this.refresh();
-    },
     selectedSector (value) {
-      if(this.premier) {
-        EventBus.$emit('sector', JSON.stringify(value));
-        EventBus.$emit('sectorname', JSON.stringify(value.variable));
+      if(this.first) {
+        var ev1 = new CustomEvent('sector', { 'detail': value });
+        document.dispatchEvent(ev1); 
+        
+        var ev2 = new CustomEvent('sectorname', { 'detail': value.variable });
+        document.dispatchEvent(ev2); 
       }
       else {
-        EventBus.$emit('sector2', JSON.stringify(value));
-        EventBus.$emit('sectorname2', JSON.stringify(value.variable));
+        var ev3 = new CustomEvent('sector2', { 'detail': value });
+        document.dispatchEvent(ev3); 
+        
+        var ev4 = new CustomEvent('sectorname2', { 'detail': value.variable });
+        document.dispatchEvent(ev4); 
       }	  
     }
   },
@@ -68,42 +64,26 @@ export default {
    this.refresh(); 
   },
   
-   updated: function() {
+  updated: function() {
   },
   
   destroyed: function() {
-    if(this.premier) {
-  	  EventBus.$off('sector', {})
-  	}
-  	else {
-  	  EventBus.$off('sector', {})
-  	}
+    document.removeEventListener('category', this.setCategory);
+    document.removeEventListener('category2', this.setCategory2);
+    document.removeEventListener('parameter', this.setParameter);
+    document.removeEventListener('parameter2', this.setParameter2);
+    document.removeEventListener('dataset', this.setDataset);
+    document.removeEventListener('dataset2', this.setDataset2);
   },
   
   created: function () {
     console.log("Aeris Eccad Sector - Creating");
-    if(this.premier) {
-	    EventBus.$on('dataset', data => {
-		   this.dataset = JSON.parse(data);
-		});
-		EventBus.$on('category', data => {
-		   this.category = JSON.parse(data);
-		});
-		EventBus.$on('parameter', data => {
-		   this.parameter = JSON.parse(data);
-		});
-	} 
-	else {
-		 EventBus.$on('dataset2', data => {
-		   this.dataset = JSON.parse(data);
-		});
-		EventBus.$on('category2', data => {
-		   this.category = JSON.parse(data);
-		});
-		EventBus.$on('parameter2', data => {
-		   this.parameter = JSON.parse(data);
-		});	
-	}
+    document.addEventListener('category', this.setCategory);
+    document.addEventListener('category2', this.setCategory2);
+    document.addEventListener('parameter', this.setParameter);
+    document.addEventListener('parameter2', this.setParameter2);
+    document.addEventListener('dataset', this.setDataset);
+    document.addEventListener('dataset2', this.setDataset2);
   },
   
   computed: {
@@ -111,14 +91,52 @@ export default {
   
   methods: {
   
-  refresh: function() {
+    setCategory: function(evt) {
+       if(this.first) {
+        this.category = evt.detail;
+       }  
+    },
+
+    setCategory2: function(evt) {
+       if(!this.first) {
+        this.category = evt.detail;
+       }  
+    },
+
+    setParameter: function(evt) {
+      if(this.first && evt.detail != null) {
+        this.parameter = evt.detail;
+      } 
+     },
+
+    setParameter2: function(evt) {
+       if(!this.first) {
+        this.parameter = evt.detail;
+       }  
+    },
+
+    setDataset: function(evt) {
+       if(this.first) {
+        this.dataset = evt.detail;
+        this.refresh();
+       }  
+    },
+
+    setDataset2: function(evt) {
+       if(!this.first) {
+        this.dataset = evt.detail;
+        this.refresh();
+       }  
+    },
+
+    refresh: function() {
   	   if (this.sectorService && this.dataset && this.dataset.id && this.dataset.id > 0) {
 	  	   var url = this.sectorService  + "/sectors/" + this.parameter.id  + "/" + this.category.id + "/" + this.dataset.id;
 	   	   this.$http.get(url).then((response)=>{this.handleSuccess(response)},(response)=>{this.handleError(response)});
    	   }
-  },
+    },
   
-  handleSuccess : function(response) {
+    handleSuccess : function(response) {
         this.sectors = response.data;
         if(this.sectors.length > 1) {
         	this.hasSector = true;
@@ -132,43 +150,44 @@ export default {
            .then(function (result) {                                      
             var variableNameSum = result.data.variableNameSum;
             this.sectors[0].variable = variableNameSum;
-            if(this.premier) {
-        	    EventBus.$emit('sectorname', JSON.stringify(variableNameSum));
+            if(this.first) {
+              var ev1 = new CustomEvent('sectorname', { 'detail': variableNameSum });
+              document.dispatchEvent(ev1); 
       		  }
       		  else {
-        		  EventBus.$emit('sectorname2', JSON.stringify(variableNameSum));
+        		  var ev2 = new CustomEvent('sectorname2', { 'detail': variableNameSum });
+              document.dispatchEvent(ev2); 
       		  }	
               console.log("SECTOR, url " + this.sectorService + "/netcdfs/" + this.parameter.id  + "/" + this.category.id + "/" + this.dataset.id)
               this.$http.get(this.sectorService + "/netcdfs/" + this.parameter.id  + "/" + this.category.id + "/" + this.dataset.id)
                 .then(function (result) { 
                   var netcdfs = result.data;
         
-                  this.$http.get(this.sectorService + "/files/" + netcdfs[0].id)
-                    .then(function (result) { 
-                       var file = result.data;
+                  if(netcdfs.length > 0) {
+                    this.$http.get(this.sectorService + "/files/" + netcdfs[0].id)
+                      .then(function (result) { 
+                        var file = result.data;
                         if(this.premier) {
-        				  EventBus.$emit('file', JSON.stringify(file));
-      					}
-      					else {
-        				  EventBus.$emit('file2', JSON.stringify(file));
-      					}	     
-                        //getScenarios(firstOrSecond, $rootScope.inventory2.id, $rootScope.inventory2.shortName);
-                   });
+                          var ev3 = new CustomEvent('file', { 'detail': file });
+                          document.dispatchEvent(ev3); 
+                        }
+                        else {
+                          var ev4 = new CustomEvent('file2', { 'detail': file });
+                          document.dispatchEvent(ev4); 
+                        }	     
+                    });
+                  } 
              });     
         });  
-  },
+    },
   
-  handleError: function(response) {
-  		console.log("Aeris-Eccad-Sector - Error while accessing server:"); 
-        var error = response.status;
-        var message = response.statusText;
-        if(!error) message = 'Can\'t connect to the server';
-        console.log('Error ' + error + ': ' + message);
-  },
-  capitalizeFirstLetter: function(string) {
-    return string.charAt(0).toUpperCase() + string.slice(1);
-  }
-    
+    handleError: function(response) {
+        console.log("Aeris-Eccad-Sector - Error while accessing server:"); 
+          var error = response.status;
+          var message = response.statusText;
+          if(!error) message = 'Can\'t connect to the server';
+          console.log('Error ' + error + ': ' + message);
+    },
   }
 }
 </script>

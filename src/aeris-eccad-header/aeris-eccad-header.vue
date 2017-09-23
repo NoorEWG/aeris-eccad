@@ -37,7 +37,6 @@
 </template>
 
 <script>
-import { EventBus } from '../aeris-event-bus/aeris-event-bus.js';
 export default {
   props: {
   },
@@ -67,21 +66,18 @@ export default {
   },
   
   destroyed: function() {
+    document.removeEventListener('hideMainHeader', this.setHideHeader);
+    document.removeEventListener('user', this.setUser);
+    document.removeEventListener('auth', this.setAuth);
   },
   
   created: function () {
     console.log("Aeris Eccad Header - Creating");
-    EventBus.$on('hideMainHeader', data => {
-      this.hideHeader = JSON.parse(data)
-    });
-    EventBus.$on('user', data => {        
-      this.user = JSON.parse(data);
-    });
-    EventBus.$on('auth', data => {        
-      this.auth = JSON.parse(data);
-    });
     
-
+    document.addEventListener('hideMainHeader', this.setHideHeader);
+    document.addEventListener('user', this.setUser);
+    document.addEventListener('auth', this.setAuth);
+ 
     this.getCategoryGroups();
     this.getSectors();
     this.getScenarios();
@@ -96,51 +92,71 @@ export default {
   
   methods: {
   
+    setHideHeader: function(evt) {
+      this.hideHeader = evt.detail;
+    },
+
+    setUser: function(evt) {
+      this.user = evt.detail;
+    },
+
+    setAuth: function(evt) {
+      this.auth = evt.detail;
+    },
+
+
   getCategoryGroups: function() {
     this.$http.get(this.eccadConfig.api + "dataset/categorygroups")
     .then(function (result) {
-      EventBus.$emit('catGroups', JSON.stringify(result.data));
+      var ev1 = new CustomEvent('catGroups', { 'detail': result.data });
+      document.dispatchEvent(ev1); 
     });   
   },
   getSectors: function() {
     this.$http.get(this.eccadConfig.api + "data/sectors")
     .then(function (result) {
-      EventBus.$emit('allSectors', JSON.stringify(result.data));
+      var ev2 = new CustomEvent('allSectors', { 'detail': result.data });
+      document.dispatchEvent(ev2); 
     });   
   },
 
   getScenarios: function() {
     this.$http.get(this.eccadConfig.api + "data/scenarios")
     .then(function (result) {
-      EventBus.$emit('allScenarios', JSON.stringify(result.data));
+      var ev3 = new CustomEvent('allScenarios', { 'detail': result.data });
+      document.dispatchEvent(ev3); 
     });   
   },
 
   getSpecies: function() {
     this.$http.get(this.eccadConfig.api + "data/species")
     .then(function (result) {
-      EventBus.$emit('allSpecies', JSON.stringify(result.data));
+      var ev4 = new CustomEvent('allSpecies', { 'detail': result.data });
+      document.dispatchEvent(ev4); 
     });   
   },
 
   getInventories: function() {
     this.$http.get(this.eccadConfig.api + "data/inventories")
     .then(function (result) {
-      EventBus.$emit('allInventories', JSON.stringify(result.data));
+      var ev5 = new CustomEvent('allInventories', { 'detail': result.data });
+      document.dispatchEvent(ev5); 
     });   
   },
 
   getSpeciesGroups: function() {
     this.$http.get(this.eccadConfig.api + "data/groupofspecies")
     .then(function (result) {
-      EventBus.$emit('allSpeciesGroups', JSON.stringify(result.data));
+      var ev6 = new CustomEvent('allSpeciesGroups', { 'detail': result.data });
+      document.dispatchEvent(ev6); 
     });   
   },
 
   getResolutions: function() {
     this.$http.get(this.eccadConfig.api + "data/resolutions")
     .then(function (result) {
-      EventBus.$emit('allResolutions', JSON.stringify(result.data));
+      var ev7 = new CustomEvent('allResolutions', { 'detail': result.data });
+      document.dispatchEvent(ev7); 
     });   
   },
       
@@ -161,8 +177,9 @@ export default {
  confirm: function() {
    this.auth = false;
    this.user = {};
-   EventBus.$emit('auth', JSON.stringify(this.auth));
-   EventBus.$off('user');
+   var ev8 = new CustomEvent('auth', { 'detail': this.auth });
+   document.dispatchEvent(ev8); 
+   // EventBus.$off('user');
 
  },
 
@@ -171,7 +188,8 @@ export default {
  },
 
  login: function() {
-   EventBus.$emit('loginForm', JSON.stringify(true));
+    var ev9 = new CustomEvent('loginForm', { 'detail': true });
+    document.dispatchEvent(ev9); 
  }
     
  }

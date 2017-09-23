@@ -107,10 +107,8 @@
 </template>
 
 <script>
-import { EventBus } from '../aeris-event-bus/aeris-event-bus.js';
 export default {
   props: {
-    
   },
   
   data () {
@@ -137,7 +135,6 @@ export default {
   
   watch: {
     mainMenu (value) {
-      console.log("mainMenu: " + value)
       if(value === 'tools') {
         this.selectionBar = true;
         this.toolsMenu = true;
@@ -171,36 +168,49 @@ export default {
   mounted: function () {
   },
   
-   updated: function() {
+  updated: function() {
   },
   
   destroyed: function() {
-    
+    document.removeEventListener('mainmenu', this.setMainMenu);
+    document.removeEventListener('catalogmenu',this.setCatalogLink);
+    document.removeEventListener('toolsmenu', this.setToolsLink);
+    document.removeEventListener('auth', this.setAuth);
+    document.removeEventListener('loginForm', this.setLoginForm);
   },
   
   created: function () {
-    console.log("Aeris Eccad App - Creating");
-    EventBus.$on('mainmenu', data => {
-      this.mainMenu = JSON.parse(data);
-		});
-    EventBus.$on('catalogmenu', data => {
-      this.catalogLink = JSON.parse(data);
-		});
-    EventBus.$on('toolsmenu', data => {
-      this.toolsLink = JSON.parse(data);
-		});	
-    EventBus.$on('auth', data => {
-      this.auth = JSON.parse(data);
-		});	
-    EventBus.$on('loginForm', data => {
-      this.loginForm = true;
-		});		        
+    console.log("Aeris Eccad App - Creating"); 
+    document.addEventListener('mainmenu', this.setMainMenu);
+    document.addEventListener('catalogmenu',this.setCatalogLink);
+    document.addEventListener('toolsmenu', this.setToolsLink);
+    document.addEventListener('auth', this.setAuth);
+    document.addEventListener('loginForm', this.setLoginForm);		        
   },
   
   computed: {
   },
   
   methods: {   
+    setMainMenu: function(evt) {
+      this.mainMenu = evt.detail;
+    },
+    
+    setCatalogLink: function(evt) {
+      this.catalogLink = evt.detail;
+    },
+
+    setToolsLink: function(evt) {
+      this.toolsLink = evt.detail;
+    },
+
+    setAuth: function(evt) {
+      this.auth = evt.detail;
+    },
+
+    setLoginForm: function(evt) {
+      this.loginForm = true;
+    },
  }
 }
 </script>

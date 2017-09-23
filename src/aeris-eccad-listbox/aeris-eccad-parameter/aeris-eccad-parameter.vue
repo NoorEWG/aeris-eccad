@@ -17,7 +17,6 @@
 </template>
 
 <script>
-import { EventBus } from '../../aeris-event-bus/aeris-event-bus.js';
 export default {
   props: {
     service: {
@@ -36,112 +35,109 @@ export default {
   
   data () {
     return {
-      parameterService: this.service,
-      premier: this.first,
-      emissionts: this.ets,
-    	parameters: {type: Array},
+    	parameterService: this.service,
+      parameters: {type: Array},
     	selectedParameter: {type: Object},
     	category: {type: Object}
     }
   },
   
   watch: {
-    service (value) {
-	      this.categoryService = value
-	      this.refresh();
-    },
-    category (value) {
-    	this.category = value
-    	this.refresh();
-    },
     selectedParameter (value) {
-      if(this.premier && !this.ets) {
-        EventBus.$emit('parameter', JSON.stringify(value));
+      if(this.first && !this.ets && value.id > 0) {
+        var ev1 = new CustomEvent('parameter', { 'detail': value });
+        document.dispatchEvent(ev1); 
+        var ev11 = new CustomEvent('parameterName', { 'detail': value.displayName });
+        document.dispatchEvent(ev11); 
       }
-      if (!this.premier) {
-        EventBus.$emit('parameter2', JSON.stringify(value));
+      if (!this.first && !this.ets && value.id > 0) {
+        var ev2 = new CustomEvent('parameter2', { 'detail': value });
+        document.dispatchEvent(ev2); 
+        var ev21 = new CustomEvent('parameterName2', { 'detail': value.displayName });
+        document.dispatchEvent(ev21); 
       }	
-      if (this.emissionts) {
-        EventBus.$emit('etParameter', JSON.stringify(value));
+      if (this.ets) {
+        var ev3 = new CustomEvent('etParameter', { 'detail': value });
+        document.dispatchEvent(ev3); 
       }	  
     }
   },
-  
+
+  computed: {
+  },
+   
   mounted: function () {
    this.refresh(); 
   },
   
-   updated: function() {
+  updated: function() {
   },
   
   destroyed: function() {
-    if(this.premier) {
-  	  EventBus.$off('parameter', {})
-  	}
-  	else {
-  	  EventBus.$off('parameter2', {})
-  	}
+    document.removeEventListener('category', this.setCategory);
+    document.removeEventListener('category2', this.setCategory2);	
+    document.removeEventListener('etCategory', this.setCategoryEts);	
   },
   
   created: function () {
     console.log("Aeris Eccad Parameter - Creating");
-    
-    EventBus.$on('category', data => {
-      var category = JSON.parse(data)
-      if(this.premier && !this.ets && category.id > 0) {
-        this.category = category;
-        console.log("category is: " + JSON.stringify(this.category));
-      }
-    });
-	  
-    EventBus.$on('category2', data => {
-      var category = JSON.parse(data)
-      if(!this.premier && category.id > 0) {
-        this.category = category;
-        console.log("category2 is: " + JSON.stringify(this.category));
-      }
-    });	
-   
-		EventBus.$on('etCategory', data => {
-		  var category = JSON.parse(data)
-      if(this.emissionts && category.id > 0) {
-        this.category = category;
-		    console.log("etCategory is: " + JSON.stringify(this.category));
-      }
-		});	
+    document.addEventListener('category', this.setCategory);
+    document.addEventListener('category2', this.setCategory2);	
+    document.addEventListener('etCategory', this.setCategoryEts);	
   },
-  
- 
   
   computed: {
   },
   
   methods: {
   
-  refresh: function() {
-  	   if (this.parameterService && this.category && this.category.id) {
-	  	   var url = this.parameterService  + "/" + this.category.id;
-	   	   this.$http.get(url).then((response)=>{this.handleSuccess(response)},(response)=>{this.handleError(response)});
-   	   }
-   },
-      
-  handleSuccess : function(response) {
-        this.parameters = response.data;
-        this.selectedParameter = this.parameters[0];
+    setCategory (evt) {
+      var category = evt.detail;
+      if(this.first && !this.ets && category.id > 0) {
+        this.category = category;
+        this.refresh();
+      }
+    },
+
+    setCategory2 (evt) {
+      var category = evt.detail;
+      if(!this.first && !this.ets && category.id > 0) {
+        this.category = category;
+        this.refresh();
+      }
+    },
+
+    setCategoryEts (evt) {
+      var category = evt.detail;
+      if(this.emissionts && category.id > 0) {
+        this.category = category;
+        this.refresh();
+      }
+    },
+
+    refresh: function() {
+        if (this.parameterService && this.category && this.category.id) {
+          var url = this.parameterService  + "/" + this.category.id;
+          console.log(url)
+          this.$http.get(url).then((response)=>{this.handleSuccess(response)},(response)=>{this.handleError(response)});
+        }
+    },
         
-        
-  },
-  handleError: function(response) {
-  		console.log("Aeris-Eccad-Parameter - Error while accessing server:"); 
-        var error = response.status;
-        var message = response.statusText;
-        if(!error) message = 'Can\'t connect to the server';
-        console.log('Error ' + error + ': ' + message);
- },
- capitalizeFirstLetter: function(string) {
-    return string.charAt(0).toUpperCase() + string.slice(1);
- }
+    handleSuccess : function(response) {
+          this.parameters = response.data;
+          this.selectedParameter = this.parameters[0];
+    },
+    handleError: function(response) {
+        console.log("Aeris-Eccad-Parameter - Error while accessing server:"); 
+          var error = response.status;
+          var message = response.statusText;
+          if(!error) message = 'Can\'t connect to the server';
+          console.log('Error ' + error + ': ' + message);
+    },
     
+    capitalizeFirstLetter: function(string) {
+        return string.charAt(0).toUpperCase() + string.slice(1);
+    }
   }
 }
 </script>

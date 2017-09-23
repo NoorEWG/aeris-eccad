@@ -7,31 +7,31 @@
       <div class="selectionColumn">
         <div class="selectionRow"> 
           <div class="selectItem">
-            <aeris-eccad-category :service="categoryService"></aeris-eccad-category>
+            <aeris-eccad-category :service="categoryService" first="true"></aeris-eccad-category>
           </div>
           <div class="selectItem">
-            <aeris-eccad-scenario :service="scenarioService"></aeris-eccad-scenario>
+            <aeris-eccad-scenario :service="scenarioService" first="true"></aeris-eccad-scenario>
           </div>
         </div>   
         <div class="selectionRow">   
           <div class="selectItem">
-            <aeris-eccad-parameter :service="parameterService"></aeris-eccad-parameter>
+            <aeris-eccad-parameter :service="parameterService" first="true"></aeris-eccad-parameter>
           </div>
           <div class="selectItem">
-            <aeris-eccad-sector :service="sectorService"></aeris-eccad-sector>   
+            <aeris-eccad-sector :service="sectorService" first="true"></aeris-eccad-sector>   
           </div> 
         </div>
         <div class="selectionRow"> 
           <div class="selectItem">
-            <aeris-eccad-dataset :service="datasetService"></aeris-eccad-dataset>
+            <aeris-eccad-dataset :service="datasetService" first="true"></aeris-eccad-dataset>
           </div>
           <div class="selectItem">
-            <aeris-eccad-date></aeris-eccad-date>
+            <aeris-eccad-date first="true"></aeris-eccad-date>
           </div>
         </div>
         <div class="selectionRow"> 
           <div class="selectItem">
-            <aeris-eccad-resolution :service="resolutionService"></aeris-eccad-resolution>
+            <aeris-eccad-resolution :service="resolutionService" first="true"></aeris-eccad-resolution>
           </div>
         </div>
   
@@ -164,24 +164,25 @@ export default {
   mounted: function () {
   },
   
-   updated: function() {
+  updated: function() {
   },
   
   destroyed: function() {
+     document.removeEventListener('hideSelectionBar', this.setHideSelectionBar);
   },
   
   created: function () {
     console.log("Aeris Eccad Selection Bar - Creating");
-    EventBus.$on('hideSelectionBar', data => {
-      this.hideSelectionBar = JSON.parse(data); 
-    });
+    document.addEventListener('hideSelectionBar', this.setHideSelectionBar);
   },
   
   computed: {
   },
   
   methods: {
- 
+    setHideSelectionBar: function(evt) {
+       this.hideSelectionBar = evt.detail; 
+    }
   }
 }
 </script>

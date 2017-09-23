@@ -17,7 +17,6 @@
 </template>
 
 <script>
-import { EventBus } from '../../aeris-event-bus/aeris-event-bus.js';
 export default {
   props: {
     service: {
@@ -35,27 +34,20 @@ export default {
       scenarioService: this.service,
     	scenarios: {type: Array},
     	selectedScenario: {type: Object},
-    	premier: this.first,
     	dataset: {type: Object},
     	hasScenario: false
     }
   },
   
   watch: {
-    service (value) {
-	      this.scenarioService = value
-	      this.refresh();
-    },
-    dataset (value) {
-    	this.dataset = value
-    	this.refresh();
-    },
     selectedScenario (value) {
-      if(this.premier) {
-        EventBus.$emit('scenario', JSON.stringify(value));
+      if(this.first) {
+        var ev1 = new CustomEvent('scenario', { 'detail': value });
+        document.dispatchEvent(ev1); 
       }
       else {
-        EventBus.$emit('scenario2', JSON.stringify(value));
+        var ev2 = new CustomEvent('scenario2', { 'detail': value });
+        document.dispatchEvent(ev2); 
       }	  
     }
   },
@@ -68,66 +60,62 @@ export default {
   },
   
   destroyed: function() {
-    if(this.premier) {
-  	  EventBus.$off('scenario', {})
-  	}
-  	else {
-  	  EventBus.$off('scenario2', {})
-  	}
+    document.removeEventListener('dataset', this.setDataset);
+    document.removeEventListener('dataset2', this.setDataset2);
   },
   
   created: function () {
     console.log("Aeris Eccad Scenario - Creating");
-    if(this.premier) {
-	    EventBus.$on('dataset', data => {
-		   this.dataset = JSON.parse(data);
-		});
-	} 
-	else {
-		 EventBus.$on('dataset2', data => {
-		   this.dataset = JSON.parse(data);
-		});	
-	}
+    document.addEventListener('dataset', this.setDataset);
+    document.addEventListener('dataset2', this.setDataset2);
   },
-  
- 
-  
+
   computed: {
   },
   
   methods: {
   
-  refresh: function() {
-  	   if (this.scenarioService && this.dataset && this.dataset.id) {
-	  	   var url = this.scenarioService  + "/" + this.dataset.id;
-	   	   this.$http.get(url).then((response)=>{this.handleSuccess(response)},(response)=>{this.handleError(response)});
-   	   }
-   },
-      
-  handleSuccess : function(response) {
-        this.scenarios = response.data;
-        if(this.scenarios.length > 1) {
-          this.scenarios[0].displayNameScenario = "Select"; 
-        	this.hasScenario = true;
-          this.selectedScenario = this.scenarios[1];
+    setDataset: function(evt) {
+       if(this.first) {
+        this.dataset = evt.detail;
+        this.refresh();
+       }  
+    },
+
+    setDataset2: function(evt) {
+       if(!this.first) {
+        this.dataset = evt.detail;
+        this.refresh();
+       }  
+    },
+    refresh: function() {
+        if (this.scenarioService && this.dataset && this.dataset.id) {
+          var url = this.scenarioService  + "/" + this.dataset.id;
+          this.$http.get(url).then((response)=>{this.handleSuccess(response)},(response)=>{this.handleError(response)});
         }
-        else {
-          this.hasScenario = false;
-        }
+    },
         
-        
-  },
-  handleError: function(response) {
-  		console.log("Aeris-Eccad-Scenario - Error while accessing server:"); 
-        var error = response.status;
-        var message = response.statusText;
-        if(!error) message = 'Can\'t connect to the server';
-        console.log('Error ' + error + ': ' + message);
- },
- capitalizeFirstLetter: function(string) {
-    return string.charAt(0).toUpperCase() + string.slice(1);
- }
-    
+    handleSuccess : function(response) {
+          this.scenarios = response.data;
+          if(this.scenarios.length > 1) {
+            this.scenarios[0].displayNameScenario = "Select"; 
+            this.hasScenario = true;
+            this.selectedScenario = this.scenarios[1];
+          }
+          else {
+            this.hasScenario = false;
+          }
+          
+          
+    },
+    handleError: function(response) {
+        console.log("Aeris-Eccad-Scenario - Error while accessing server:"); 
+          var error = response.status;
+          var message = response.statusText;
+          if(!error) message = 'Can\'t connect to the server';
+          console.log('Error ' + error + ': ' + message);
+    }
+ 
   }
 }
 </script>

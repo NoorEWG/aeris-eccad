@@ -50,7 +50,6 @@
 </template>
 
 <script>
-import { EventBus } from '../aeris-event-bus/aeris-event-bus.js';
 export default {
   props: {
     service: {
@@ -82,7 +81,6 @@ export default {
   },
   
   destroyed: function() { 
-  	EventBus.$off('login', {})
   },
   
   created: function () {
@@ -108,10 +106,12 @@ export default {
      else {
        this.isConfirmed = true;
        this.loginSuccess = true;
-       EventBus.$emit('auth', JSON.stringify(true));
-       EventBus.$emit('toolsmenu', JSON.stringify({url: '', text: 'Map Display', menu: 'tools'}));
-       EventBus.$emit('user', JSON.stringify(this.user));
-
+       var ev1 = new CustomEvent('auth', { 'detail': true });
+       document.dispatchEvent(ev1); 
+       var ev2 = new CustomEvent('toolsmenu', { 'detail': {url: '', text: 'Map Display', menu: 'tools'}});
+       document.dispatchEvent(ev2); 
+       var ev3 = new CustomEvent('user', { 'detail': this.user });
+       document.dispatchEvent(ev3); 
      }     
   },
   

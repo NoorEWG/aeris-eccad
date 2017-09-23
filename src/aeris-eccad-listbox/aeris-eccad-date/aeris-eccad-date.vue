@@ -21,7 +21,6 @@
 </template>
 
 <script>
-import { EventBus } from '../../aeris-event-bus/aeris-event-bus.js';
 export default {
   props: {
     first: {
@@ -32,7 +31,6 @@ export default {
   
   data () {
     return {
-       premier: this.first,
        beginDates: [],
        endDates: [],
        selectedBegindate: {},
@@ -43,82 +41,49 @@ export default {
   watch: {
     selectedBegindate (value) {
       if(value) {
-        if(this.premier) {
-          EventBus.$emit('beginDate', JSON.stringify(value));
+        if(this.first) {
+          var ev1 = new CustomEvent('beginDate', { 'detail': value });
+          document.dispatchEvent(ev1); 
         }
         else {
-          EventBus.$emit('beginDate2', JSON.stringify(value));
+          var ev2 = new CustomEvent('beginDate2', { 'detail': value });
+          document.dispatchEvent(ev2);
         }	  
       }
     },
      selectedEnddate (value) {
       if(value) {
-        if(this.premier) {
-          EventBus.$emit('endDate', JSON.stringify(value));
+        if(this.first) {
+          var ev3 = new CustomEvent('endDate', { 'detail': value });
+          document.dispatchEvent(ev3); 
         }
         else {
-          EventBus.$emit('endDate2', JSON.stringify(value));
+          var ev4 = new CustomEvent('endDate2', { 'detail': value });
+          document.dispatchEvent(ev4); 
         }
       }	  
     }
   },
   
   mounted: function () {
-   //this.refresh(); 
   },
   
-   updated: function() {
+  updated: function() {
   },
   
   destroyed: function() {
-    if(this.premier) {
-  	  EventBus.$off('beginDate', {})
-      EventBus.$off('endDate', {})
-  	}
-  	else {
-  	  EventBus.$off('beginDate2', {})
-      EventBus.$off('endDate2', {})
-  	}
+    document.removeEventListener('beginDates', this.setBeginDates);
+    document.removeEventListener('endDates', this.setEndDates);
+    document.removeEventListener('beginDates2', this.setBeginDates2);
+    document.removeEventListener('endDates2', this.setEndDates2);
   },
   
   created: function () {
     console.log("Aeris Eccad Grids - Creating");
-    if(this.premier) {
-	    EventBus.$on('beginDates', data => {
-        var beginDates = JSON.parse(data);
-        for(var i = 0; i < beginDates.length; i++) {
-          beginDates[i].index = i;
-        }
-        this.beginDates = beginDates; 
-        this.selectedBegindate = beginDates[0];
-      });
-	    EventBus.$on('endDates', data => {
-		    var endDates = JSON.parse(data);
-        for(var i = 0; i < endDates.length; i++) {
-          endDates[i].index = i;
-        }
-        this.endDates = endDates;
-        this.selectedEnddate = endDates[endDates.length - 1];
-      });
-	  } 
-	  else {
-	    EventBus.$on('beginDates2', data => {
-		    var beginDates = JSON.parse(data);
-        for(var i = 0; i < beginDates.length; i++) {
-          beginDates[i].index = i;
-        }
-        this.beginDates = beginDates; 
-        this.selectedBegindate = beginDates[0];
-		  });  
-	    EventBus.$on('endDates2', data => {
-		    var endDates = JSON.parse(data);
-        for(var i = 0; i < endDates.length; i++) {
-          endDates[i].index = i;
-        }
-        this.endDates = endDates;
-        this.selectedEnddate = endDates[endDates.length - 1];
-	    });
-    } 
+    document.addEventListener('beginDates', this.setBeginDates);
+    document.addEventListener('endDates', this.setEndDates);
+    document.addEventListener('beginDates2', this.setBeginDates2);
+    document.addEventListener('endDates2', this.setEndDates2);
   },
   
   computed: {
@@ -126,6 +91,52 @@ export default {
   
   methods: {
    
+    setBeginDates: function(evt) {
+		  console.log("DATE, first = " + this.first)
+      if(this.first) {
+        var beginDates = evt.detail;
+        for(var i = 0; i < beginDates.length; i++) {
+          beginDates[i].index = i;
+        }
+        this.beginDates = beginDates; 
+        this.selectedBegindate = beginDates[0];
+      }
+    },
+    
+    setBeginDates2: function(evt) {
+		  console.log("DATE2, first = " + this.first)
+      if(!this.first) {
+        var beginDates = evt.detail;
+        for(var i = 0; i < beginDates.length; i++) {
+          beginDates[i].index = i;
+        }
+        this.beginDates = beginDates; 
+        this.selectedBegindate = beginDates[0];
+      }  
+    },
+
+    setEndDates: function(evt) {
+		  if(this.first) {
+        var endDates = evt.detail;
+        for(var i = 0; i < endDates.length; i++) {
+          endDates[i].index = i;
+        }
+        this.endDates = endDates;
+        this.selectedEnddate = endDates[endDates.length - 1];
+      }
+    },
+    
+    setEndDates2: function(evt) {
+		  if(!this.first) {
+        var endDates = evt.detail;
+        for(var i = 0; i < endDates.length; i++) {
+          endDates[i].index = i;
+        }
+        this.endDates = endDates;
+        this.selectedEnddate = endDates[endDates.length - 1];
+      }
+    },
+
     dateBack: function() {
       var index = 0;
       for(var i = 0; i < this.beginDates.length ; i++) {
@@ -158,7 +169,6 @@ export default {
         this.selectedBegindate = this.beginDates[this.beginDates.length - 1];
       }
     }
-
   }
 }
 </script>
