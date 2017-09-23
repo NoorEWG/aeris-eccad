@@ -127,11 +127,36 @@ export default {
   methods: {
    
     dateBack: function() {
+      var index = 0;
+      for(var i = 0; i < this.beginDates.length ; i++) {
+        if(this.selectedBegindate.id === this.beginDates[i].id) {
+          index = i;
+          break;
+        }
+      }
+      if(index > 0) {
+        this.selectedBegindate = this.beginDates[index-1];
+      }
+      else {
+        this.selectedBegindate = this.beginDates[0];    
+      }
 
     },
 
     dateForward: function() {
-
+       var index = this.beginDates.length - 1;
+      for(var i = 0; i < this.beginDates.length ; i++) {
+        if(this.selectedBegindate.id === this.beginDates[i].id) {
+          index = i;
+          break;
+        }
+      }
+      if(index < this.beginDates.length - 1) {
+        this.selectedBegindate = this.beginDates[index+1];
+      }
+      else {
+        this.selectedBegindate = this.beginDates[this.beginDates.length - 1];
+      }
     }
 
   }
