@@ -10,7 +10,6 @@
 </template>
 
 <script>
-import { EventBus } from '../../aeris-event-bus/aeris-event-bus.js';
 export default {
   props: {
   },
@@ -35,21 +34,23 @@ export default {
   },
   
   destroyed: function() {
+    document.removeEventListener('invCats', this.setInvCats);
   },
   
   created: function () {
     console.log("Aeris Eccad Temporalchart - Creating");
-    EventBus.$on('invCats', data => {
-        this.invCats = JSON.parse(data);
-        this.getSeriesAndLegends();
-    });
+    document.addEventListener('invCats', this.setInvCats);
   },
   
   computed: {
   },
   
   methods: {
-
+    
+    setInvCats: function(evt) {
+      this.invCats = evt.detail;
+      this.getSeriesAndLegends();
+    },
     getSeriesAndLegends: function() {
         if(this.invCats.length > 1) {             
             // this.temporalSeries = [];

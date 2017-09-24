@@ -50,7 +50,6 @@
 </template>
 
 <script>
-import { EventBus } from '../aeris-event-bus/aeris-event-bus.js';
 export default {
   props: {
     service: {
@@ -85,12 +84,23 @@ export default {
   },
   
   destroyed: function() { 
+    document.removeEventListener('categories', this.setCategories);
+	  document.removeEventListener('invCats', this.setInvCats);
   },
   
   created: function () {
     console.log("Aeris Eccad Species - Creating");
-    EventBus.$on('categories', data => {
-      var categories = JSON.parse(data);
+    document.addEventListener('categories', this.setCategories);
+	  document.addEventListener('invCats', this.setInvCats);
+  },
+  
+  computed: {
+  },
+  
+  methods: {
+
+    setCategories: function(evt) {
+      var categories = evt.detail;
       categories.forEach( function(cat) {
         cat.colorCircle = cat.color + "-circle checkboxSpecies"
         cat.isChecked = true;
@@ -105,17 +115,12 @@ export default {
       if (this.categories.length > 0) {
         this.getParamGroups();
       }  
-    }); 
-    EventBus.$on('invCats', data => {
-      this.invCats = JSON.parse(data);
+    },
+
+    setInvCats: function(evt) {
+       this.invCats = evt.detail;
       this.getParamGroups();
-    });  
-  },
-  
-  computed: {
-  },
-  
-  methods: {
+    },
   
   getParamGroups: function() {
 

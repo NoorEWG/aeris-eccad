@@ -17,7 +17,6 @@
 </template>
 
 <script>
-import { EventBus } from '../../aeris-event-bus/aeris-event-bus.js';
 export default {
   props: {
   },
@@ -36,9 +35,9 @@ export default {
 	      this.refresh();
     },
     selectedDataset (value) {
-    	EventBus.$emit('itDataset', JSON.stringify(value));
-    	
-    }
+      var ev1 = new CustomEvent('itDataset', { 'detail': value });
+      document.dispatchEvent(ev1); 
+    }  
   },
   
   mounted: function () {
@@ -49,15 +48,12 @@ export default {
   },
   
   destroyed: function() {
-  	EventBus.$off('itDataset', {});
+  	document.removeEventListener('itCategory', this.setCategory);
   },
   
   created: function () {
     console.log("Aeris Eccad Inventory Time Series Dataset - Creating");
-    EventBus.$on('itCategory', data => {
-      this.category = JSON.parse(data);
-      this.refresh();
-    });
+    document.addEventListener('itCategory', this.setCategory);
   },
   
   computed: {
@@ -65,6 +61,11 @@ export default {
   
   methods: {
   
+    setCategory: function(evt) {
+      this.category = evt.detail;
+      this.refresh();
+    },
+
     refresh: function() {
         if (this.category && this.category.id > 0) {
           var url = 'http://eccad.aeris-data.fr/eccad2web/rest/data/inventoriesbycategory?categoryid='+ this.category.id;

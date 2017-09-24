@@ -12,7 +12,6 @@
 </template>
 
 <script>
-import { EventBus } from '../../aeris-event-bus/aeris-event-bus.js';
 export default {
   props: {
       identifier: {type: String},
@@ -41,27 +40,21 @@ export default {
   },
   
   destroyed: function() {
+    document.removeEventListener('etParameter', this.setParameter);
+    document.removeEventListener('etCategory', this.setCategory);
+    document.removeEventListener('etGlobal', this.setGlobal);
+    document.removeEventListener('unit', this.setUnit);
+    document.removeEventListener('showETS', this.setShowETS);
   },
   
   created: function () {
     console.log("Aeris Eccad Emission Time Series Chart - Creating");
-    EventBus.$on('etParameter', data => {
-        this.etParameter = JSON.parse(data);
-    });
-    EventBus.$on('etCategory', data => {
-        this.etCategory = JSON.parse(data);
-    });
-    EventBus.$on('etGlobal', data => {
-        this.isGlobal = JSON.parse(data);
-    });
-    EventBus.$on('unit', data => {
-        this.etUnit = JSON.parse(data);
-    });
-    EventBus.$on('showETS', data => {
-        this.showGraph = true;
-        this.showTimeSeries();
-    });
-    
+    document.addEventListener('etParameter', this.setParameter);
+    document.addEventListener('etCategory', this.setCategory);
+    document.addEventListener('etGlobal', this.setGlobal);
+    document.addEventListener('unit', this.setUnit);
+    document.addEventListener('showETS', this.setShowETS);
+
   },
   
   computed: {
@@ -69,11 +62,31 @@ export default {
   
   methods: {
 
+      setParameter: function(evt) {
+          this.etParameter = evt.detail;
+      },
+
+      setCategory: function(evt) {
+          this.etCategory = evt.detail;
+      },
+
+      setGlobal: function(evt) {
+          this.etGlobal = evt.detail;
+      },
+
+      setUnit: function(evt) {
+          this.etUnit = evt.detail;
+      },
+
+      setShowETS: function(evt) {
+          this.showGraph = true;
+          this.showTimeSeries();
+      },
+
   showTimeSeries:  function() {
     // get data from the server
     // parse it to a graph
     let url = 'http://eccad.aeris-data.fr/eccad2web/rest/dataset/emissionTimeSeries/' + this.etParameter.id + '/' + this.etCategory.id + '/' + this.isGlobal + '/' + 'sabine.daras@obs-mip.fr';
-    console.log(url);
     this.$http.get(url)
     .then(function (result) {
 
@@ -117,8 +130,9 @@ export default {
         this.title = chartTitle + ' ' + this.firstUpper(this.etCategory.fullName) + " - "+ this.etParameter.shortName; 
         this.drawChart(this.identifier, "spline", this.series);
         this.showGraph = true;
-        EventBus.$emit('showETSGraph', JSON.stringify(this.showGraph));
- 
+        var ev1 = new CustomEvent('showETSGraph', { 'detail': this.showGraph });
+        document.dispatchEvent(ev1); 
+     
     }); 
   },
 

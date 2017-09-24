@@ -44,19 +44,11 @@ export default {
   
   created: function () {
     console.log("Aeris Eccad Emission Time Series Chart - Creating");
-    EventBus.$on('itDataset', data => {
-        this.itInventory = JSON.parse(data);
-    });
-    EventBus.$on('itCategory', data => {
-        this.itCategory = JSON.parse(data);
-    });
-    EventBus.$on('unit', data => {
-        this.itUnit = JSON.parse(data);
-    });
-    EventBus.$on('showITS', data => {
-        this.showGraph = true;
-        this.showTimeSeries();
-    });
+    document.addEventListener('itDataset', this.setDataset);
+    document.addEventListener('itCategory', this.setCategory);
+    document.addEventListener('unit', this.setUnit);
+    document.addEventListener('showITS', this.setShowITS);
+
     
   },
   
@@ -64,6 +56,24 @@ export default {
   },
   
   methods: {
+
+    setDataset: function(evt) {
+          this.itInventory = evt.detail;
+      },
+
+      setCategory: function(evt) {
+          this.itCategory = evt.detail;
+      },
+
+      setUnit: function(evt) {
+          this.etUnit = evt.detail;
+      },
+
+      setShowITS: function(evt) {
+          this.showGraph = true;
+          this.showTimeSeries();
+      },
+
 
   showTimeSeries:  function() {
     // get data from the server parse it to a graph
@@ -115,8 +125,8 @@ export default {
         this.title = chartTitle + ' ' + this.firstUpper(this.itCategory.fullName) + " - "+ this.itInventory.titre;  
         this.drawChart(this.identifier, "spline", this.series);
         this.showGraph = true;
-        EventBus.$emit('showITSGraph', JSON.stringify(this.showGraph));
- 
+        var ev1 = new CustomEvent('showITSGraph', { 'detail': this.showGraph });
+        document.dispatchEvent(ev1); 
     }); 
   },
 

@@ -73,12 +73,14 @@ export default {
   methods: {
     
     change: function(link) {
-        EventBus.$emit('toolsmenu', JSON.stringify(link));
+        var ev1 = new CustomEvent('toolsmenu', { 'detail': link });
+        document.dispatchEvent(ev1); 
     },
 
     hideHeader: function(bool) {
         this.hideheader = bool;
-        EventBus.$emit('hideSelectionBar', JSON.stringify(bool));
+        var ev2 = new CustomEvent('hideSelectionBar', { 'detail': bool });
+        document.dispatchEvent(ev2);
     } 
   }
 }

@@ -1,6 +1,6 @@
 <template>
   <div>	  
-    <div class="mapTitleHeader">{{ title }}</div>
+    <div class="mapTitleHeader">{{ name }} {{ title }}</div>
 
    <div class="mapDiv">
 	        <div :class="mapWrapper">
@@ -185,7 +185,7 @@ export default {
   },
   
   created: function () {
-	this.drawBaseMap();  
+	// this.drawBaseMap();  
 	document.addEventListener('userMap', this.setUseMap);
 	document.addEventListener('mainmenu', this.setMainMenu);
 	document.addEventListener('isMask', this.setMask);
@@ -557,7 +557,7 @@ export default {
 				 this.compareParams = compareParams;
 				 this.draw();
 				 this.getLegend();
-				 // this.getTitle();  
+				 this.getTitle();  
 
         	   
            });
@@ -566,10 +566,16 @@ export default {
 
 	getTitle: function() {
 		var scenario = ""
+		if(!this.compare) {
 		if(this.scenario && this.displayNameScenario) {
 			scenario = this.scenario.displayNameScenario; 
 		}
 		this.title = this.dataset.titre + " " +  this.resolution.fullNameResolution + " " + this.datatype.shortName + " " + this.parameter.shortName + " " + scenario + " - "  + this.beginDate.date;
+		}
+
+		else {
+			this.title = "Compare";
+		}
 	},
 
     setMask: function(mask) {
@@ -642,7 +648,7 @@ export default {
 
 	  var params = {};
       var fileName = '';
-	  if(this.compareParams && this.compareParams.combineFileName) {
+	  if(this.compare && this.compareParams && this.compareParams.combineFileName) {
 		fileName = this.compareParams.combineFileName;
 		params = {
 				'FORMAT' : 'image/png',
@@ -663,7 +669,7 @@ export default {
 	  else {
 		// color range and logscale: todo  
 		// if (this.mapService && this.sectorName && this.file && this.file[0].name && this.beginDate && this.beginDate.date) {	    
-		 if(this.mapParams && this.mapParams.filename) {
+		 if(this.mapParams && this.mapParams.filename && !this.compare) {
 			fileName = this.mapParams.filename;
 			params = {
 				'FORMAT' : 'image/png',

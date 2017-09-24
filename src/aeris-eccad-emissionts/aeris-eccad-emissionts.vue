@@ -11,11 +11,9 @@
       <aeris-eccad-parameter :service="parameterService" ets="true"></aeris-eccad-parameter>
       <div>
          <input type="radio" name="glb" value="global" checked="checked" @click="changeGbl(etGlobal)"/>global
-        <!--input type="radio" name="glb" value="global" v-model="etGlobal" data-ng-checked="global" data-ng-change="globalChange()">global</input-->
       </div>
       <div>
           <input type="radio" name="glb" value="regional" @click="changeGbl(etRegional)"/>regional
-        <!--input type="radio" name="glb" value="regional" v-model="etRegional">regional</input-->
       </div>
       <div>
         <input type="button" class="etButton" @click="showTimeSeries()" value="Show time series"></input>
@@ -23,7 +21,7 @@
     </div>
     <br />
     
-    <div class="etExample" v-show="!showGraph">
+    <div class="etExample" :show="!showGraph">
       <div>
         <i class="fa fa-info-circle" style="height: 20px;"></i>
         <span>Please choose a datatype, parameter and click the button<br>Example:</span>
@@ -40,7 +38,6 @@
 </template>
 
 <script>
-import { EventBus } from '../aeris-event-bus/aeris-event-bus.js';
 export default {
   props: {
     service: {
@@ -69,31 +66,37 @@ export default {
   },
   
   destroyed: function() { 
+     document.removeEventListener('showETSGraph', this.setShowGraph);
   },
   
   created: function () {
     console.log("Aeris Eccad Emission Time Series - Creating");
-    EventBus.$on('showETSGraph', data => {
-      this.showGraph = JSON.parse(data);
-    });
+    document.addEventListener('showETSGraph', this.setShowGraph);
   },
   
   computed: {
   },
   
   methods: {
+    
+    setShowGraph: function(evt) {
+      this.showGraph = evt.detail;
+    },
+    
     showTimeSeries: function() {
-      EventBus.$emit('showETS', JSON.stringify(true));
+      var ev1 = new CustomEvent('showETS', { 'detail': true });
+      document.dispatchEvent(ev1); 
     },
 
     changeGbl: function(value) {
-      if(value === global) {
+      if(value === 'global') {
         this.isGlobal = true;
       }
       else {
         this.isGlobal = false;
       }
-      EventBus.$emit('etGlobal', JSON.stringify(this.isGlobal));
+      var ev2 = new CustomEvent('etGlobal', { 'detail': this.isGlobal});
+      document.dispatchEvent(ev2); 
     }   
   }
 }

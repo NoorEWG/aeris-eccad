@@ -124,7 +124,6 @@
 </template>
 
 <script>
-import { EventBus } from '../aeris-event-bus/aeris-event-bus.js';
 export default {
   props: {
   },
@@ -157,23 +156,26 @@ export default {
   mounted: function () {
   },
   
-   updated: function() {
+  updated: function() {
   },
   
   destroyed: function() { 
+    document.removeEventListener('metadata', this.setInventory);
   },
   
   created: function () {
     console.log("Aeris Eccad Metadata - Creating");
-    EventBus.$on('metadata', data => {
-      this.inv = JSON.parse(data);
-	});
+    document.addEventListener('metadata', this.setInventory);
   },
   
   computed: {
   },
   
   methods: {
+
+    setInventory: function(evt) {
+         this.inv = evt.detail;
+    },  
   
   refresh: function() {
     if(this.inv && this.inv.name) {

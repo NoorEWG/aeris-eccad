@@ -2,7 +2,6 @@
  dependances: 
 */
 
-
 <template>
   <div>
     <br />
@@ -32,7 +31,6 @@
 </template>
 
 <script>
-import { EventBus } from '../aeris-event-bus/aeris-event-bus.js';
 export default {
   props: {
     service: {
@@ -61,21 +59,26 @@ export default {
   },
   
   destroyed: function() { 
+    document.removeEventListener('showITSGraph', this.setShowGraph);
   },
   
   created: function () {
     console.log("Aeris Eccad Emission Time Series - Creating");
-    EventBus.$on('showITSGraph', data => {
-      this.showGraph = JSON.parse(data);
-    });
+    document.addEventListener('showITSGraph', this.setShowGraph);
   },
   
   computed: {
   },
   
   methods: {
+
+    setShowGraph: function(evt) {
+      this.showGraph = evt.detail;
+    },
+    
     showTimeSeries: function() {
-      EventBus.$emit('showITS', JSON.stringify(true));
+      var ev1 = new CustomEvent('showITS', { 'detail': true });
+      document.dispatchEvent(ev1); 
     }
   }
 }

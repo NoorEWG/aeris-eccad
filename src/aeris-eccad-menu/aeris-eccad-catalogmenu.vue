@@ -57,8 +57,8 @@ export default {
   methods: {
     
     change: function(link) {
-      // console.log("catalogmenu: " + JSON.stringify(link));
-      EventBus.$emit('catalogmenu', JSON.stringify(link));
+      var ev1 = new CustomEvent('catalogmenu', { 'detail': link });
+      document.dispatchEvent(ev1); 
     }
   }
 }

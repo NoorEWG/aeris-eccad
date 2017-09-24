@@ -77,7 +77,6 @@ in
 </template>
 
 <script>
-import { EventBus } from '../aeris-event-bus/aeris-event-bus.js';
 export default {
   props: {
     service: {
@@ -129,24 +128,30 @@ export default {
   },
   
   destroyed: function() {
+    document.removeEventListener('catGroups', this.setCatGroups);
+	document.removeEventListener('categoryGroup', this.setCategoryGroup);  
   },
   
   created: function () {
   	console.log("Aeris Eccad Catalog - Creating");
-  	EventBus.$on('catGroups', data => {
-      this.categoryGroups = JSON.parse(data);
+    document.addEventListener('catGroups', this.setCatGroups);
+	document.addEventListener('categoryGroup', this.setCategoryGroup);  
+  },
+ 
+  methods: {
+
+   setCatGroups: function(evt) {
+     this.categoryGroups = evt.detail;
 	  var tmp = this.categoryGroups;
       for(var i = 0; i < tmp.length ; i++) {
          this.refresh(tmp[i].name); 
       }   
-    });
-    EventBus.$on('categorygroup', data => {
-      this.selectedCatGroup = JSON.parse(data); 
-    });
-  },
- 
-  methods: {
+   },   
   
+   setCategoryGroup: function(evt) {
+    this.selectedCatGroup = evt.detail; 
+   },
+
   refresh: function(catgroupname) {
     this.$http.get(this.catalogService + catgroupname).then((response)=>{this.handleSuccess(response)},(response)=>{this.handleError(response)});
    },
@@ -242,7 +247,8 @@ export default {
       this.selectedInvCats = aux;
     }
     if(aux) {
-        EventBus.$emit('invCats', JSON.stringify(aux));
+        var ev1 = new CustomEvent('invCats', { 'detail': aux });
+        document.dispatchEvent(ev1); 
     }
   },
   
@@ -259,9 +265,11 @@ export default {
         id: inventory.id,
         name: inventory.name
       }
-      EventBus.$emit('metadata', JSON.stringify(metadata));  
+      var ev2 = new CustomEvent('metadata', { 'detail': metadata });
+      document.dispatchEvent(ev2); 
       // change to the metadatatab
-      EventBus.$emit('catalogmenu', JSON.stringify({url: '', text: 'Metadata', menu: 'catalog'}));
+      var ev3 = new CustomEvent('catalogmenu', { 'detail': {url: '', text: 'Metadata', menu: 'catalog'}});
+      document.dispatchEvent(ev3); 
     },
 
     orderByTitleAsc: function () {
