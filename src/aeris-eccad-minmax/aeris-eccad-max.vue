@@ -34,15 +34,17 @@ export default {
   watch: {
     max (value) {
       if(this.manual) {
-        if(this.compare)
-          EventBus.$emit('manualMaxCompare', JSON.stringify(value));
+        if(this.compare) {
+          var ev1 = new CustomEvent('manualMaxCompare', { 'detail': value });
+          document.dispatchEvent(ev1); 
+        }
         else {
           if(this.first) {
-            EventBus.$emit('manualMax', JSON.stringify(value));
-        
+            var ev2 = new CustomEvent('manualMax', { 'detail': value });
+            document.dispatchEvent(ev2); 
           } else {
-            EventBus.$emit('manualMax2', JSON.stringify(value));
-        
+            var ev3 = new CustomEvent('manualMax2', { 'detail': value });
+            document.dispatchEvent(ev3); 
           }
         }
       }
@@ -68,35 +70,42 @@ export default {
   
   created: function () {
     console.log("Aeris Eccad Max - Creating");
-    EventBus.$on('range', data => {
-      if(data === 'Manual') {
-        this.manual = true;
-      } else {
-        this.manual = false;
-      }
-    });
-    EventBus.$on('max', data => {
-      if(this.first & !this.compare) {
-        this.max = JSON.parse(data);
-      }
-    });
-    EventBus.$on('max2', data => {
-      if(!this.first & !this.compare) {
-        this.max = JSON.parse(data);
-      }
-    });
-  EventBus.$on('compareResult', data => {
-      if(this.compare) {
-        var data = JSON.parse(data)
-        this.max = data.maxCompare;
-      }
-    });
+    document.addEventListener('range', this.setRange);
+    document.addEventListener('max', this.setMax);
+    document.addEventListener('max2', this.setMax2);
+    document.addEventListener('compareResult', this.setCompareMax);
   },
   
   computed: {
   },
   
   methods: {     
+
+     setRange: function(evt) {
+       if(evt.detail === 'Manual') {
+        this.manual = true;
+      } else {
+        this.manual = false;
+      }
+    },
+
+    setMax: function(evt) {
+       if(this.first && !this.compare) {
+        this.max = evt.detail;
+       }  
+    },
+
+    setMax2: function(evt) {
+	   if(!this.first) {
+        this.max = evt.detail;
+       }  
+    },
+
+    setCompareMax: function(evt) {
+        if(this.compare) {
+        this.max = evt.detail;
+      } 
+    },
   }
 }
 </script>

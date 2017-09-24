@@ -35,6 +35,14 @@ export default {
        endDates: [],
        selectedBegindate: {},
        selectedEnddate: {},
+       file: [],
+       parameter: {},
+       sector: {},
+       sectorName: '',
+       parameterName: '',
+       isMask: false,
+       isTotal: false,
+
     }
   },
   
@@ -72,68 +80,231 @@ export default {
   },
   
   destroyed: function() {
-    document.removeEventListener('beginDates', this.setBeginDates);
-    document.removeEventListener('endDates', this.setEndDates);
-    document.removeEventListener('beginDates2', this.setBeginDates2);
-    document.removeEventListener('endDates2', this.setEndDates2);
+    document.removeEventListener('isMask', this.setMask);
+    document.removeEventListener('category', this.setCategory);
+    document.removeEventListener('category2', this.setCategory2);
+    document.rempveEventListener('parameter', this.setParameter);
+    document.removeEventListener('parameter2', this.setParameter2);
+    document.removeEventListener('dataset', this.setDataset);
+    document.removeEventListener('dataset2', this.setDataset2);
+	  document.removeEventListener('sector', this.setSector);
+    document.removeEventListener('sector2', this.setSector2);
+    document.removeEventListener('file', this.setFile);
+    document.removeEventListener('file2', this.setFile2);
+    document.removeEventListener('parameterName', this.setParameterName);
+    document.removeEventListener('parameterName2', this.setParameterName2);
+    document.removeEventListener('isTotal', this.setTotal);
+	  document.removeEventListener('isTotal2', this.setTotal2);
+    document.removeEventListener('sectorname', this.setSectorName);
+    document.removeEventListener('sectorname2', this.setSectorName2);
   },
   
   created: function () {
     console.log("Aeris Eccad Grids - Creating");
-    document.addEventListener('beginDates', this.setBeginDates);
-    document.addEventListener('endDates', this.setEndDates);
-    document.addEventListener('beginDates2', this.setBeginDates2);
-    document.addEventListener('endDates2', this.setEndDates2);
+    document.addEventListener('isMask', this.setMask);
+    document.addEventListener('category', this.setCategory);
+    document.addEventListener('category2', this.setCategory2);
+    document.addEventListener('parameter', this.setParameter);
+    document.addEventListener('parameter2', this.setParameter2);
+    document.addEventListener('dataset', this.setDataset);
+    document.addEventListener('dataset2', this.setDataset2);
+	  document.addEventListener('sector', this.setSector);
+    document.addEventListener('sector2', this.setSector2);
+    document.addEventListener('file', this.setFile);
+    document.addEventListener('file2', this.setFile2);
+    document.addEventListener('parameterName', this.setParameterName);
+    document.addEventListener('parameterName2', this.setParameterName2);
+    document.addEventListener('isTotal', this.setTotal);
+	  document.addEventListener('isTotal2', this.setTotal2);
+    document.addEventListener('sectorname', this.setSectorName);
+    document.addEventListener('sectorname2', this.setSectorName2);
   },
   
   computed: {
   },
   
   methods: {
-   
-    setBeginDates: function(evt) {
-		  console.log("DATE, first = " + this.first)
-      if(this.first) {
-        var beginDates = evt.detail;
-        for(var i = 0; i < beginDates.length; i++) {
-          beginDates[i].index = i;
-        }
-        this.beginDates = beginDates; 
-        this.selectedBegindate = beginDates[0];
-      }
-    },
-    
-    setBeginDates2: function(evt) {
-		  console.log("DATE2, first = " + this.first)
-      if(!this.first) {
-        var beginDates = evt.detail;
-        for(var i = 0; i < beginDates.length; i++) {
-          beginDates[i].index = i;
-        }
-        this.beginDates = beginDates; 
-        this.selectedBegindate = beginDates[0];
-      }  
+
+   setCategory: function(evt) {
+       if(this.first) {
+        this.datatype = evt.detail;
+       }  
     },
 
-    setEndDates: function(evt) {
-		  if(this.first) {
-        var endDates = evt.detail;
-        for(var i = 0; i < endDates.length; i++) {
-          endDates[i].index = i;
-        }
-        this.endDates = endDates;
-        this.selectedEnddate = endDates[endDates.length - 1];
-      }
+    setCategory2: function(evt) {
+       if(!this.first) {
+        this.datatype = evt.detail;
+       }  
     },
-    
-    setEndDates2: function(evt) {
-		  if(!this.first) {
-        var endDates = evt.detail;
-        for(var i = 0; i < endDates.length; i++) {
-          endDates[i].index = i;
-        }
-        this.endDates = endDates;
-        this.selectedEnddate = endDates[endDates.length - 1];
+
+    setParameter: function(evt) {
+	   if(this.first) {
+        this.parameter = evt.detail;
+      } 
+     },
+
+    setParameter2: function(evt) {
+       if(!this.first) {
+        this.parameter = evt.detail;
+       }
+    },
+
+
+    setDataset: function(evt) {
+       if(this.first) {
+        this.dataset = evt.detail;
+       }  
+    },
+
+    setDataset2: function(evt) {
+       if(!this.first) {
+        this.dataset = evt.detail;
+       }  
+    }, 
+
+  setSector: function(evt) {
+       if(this.first) {
+        this.sector = evt.detail;
+       }  
+  },
+	setSector2: function(evt) {
+       if(!this.first) {
+        this.sector = evt.detail;
+       }  
+    }, 
+
+  setFile: function(evt) {
+        if(this.first) {
+        this.file = evt.detail;
+		this.getGrids();
+       }  
+    },
+
+	setFile2: function(evt) {
+       if(!this.first) {
+        this.file = evt.detail;
+		this.getGrids();
+       }  
+	  
+    },
+
+    setParameterName: function(evt) {
+	   if(this.first) {
+		console.log("PARAM NAME: " + JSON.stringify(evt.detail))   
+        this.parameterName = evt.detail;
+		this.getGrids();
+       }  
+    },
+
+	setParameterName2: function(evt) {
+	   if(!this.first) {
+		console.log("PARAM NAME 2: " + JSON.stringify(evt.detail))   
+        this.parameterName = evt.detail;
+		this.getGrids();
+       }  
+    },
+
+  setTotal: function(evt) { 
+	  if(this.first) {
+        this.isTotal = evt.detail;
+        	this.getGrids();
+      } 
+	},   
+
+	setTotal2: function(evt) { 
+	  if(!this.first) {
+        this.isTotal = evt.detail;
+        	this.getGrids();
+       }  
+	},  
+
+  setSectorName: function(evt) {
+        if(this.first && !this.compare) {
+        this.sectorName = evt.detail;
+       }  
+	  
+    },
+
+	setSectorName2: function(evt) {
+       if(!this.first) {
+        this.sectorName = evt.detail;
+       }  
+    },
+
+  setMask: function(evt) {  
+		this.isMask = evt.detail;
+    	this.getGrids();
+	},
+
+   correctedMin: function(value) {
+         // TODO
+         return value;
+    },   
+
+   getGrids: function() {
+     
+	    console.log("GET GRIDS " + JSON.stringify(this.file) + " / " + JSON.stringify(this.sector) + " / " + JSON.stringify(this.parameterName));  
+   	
+      if(this.file && this.file[0] && this.file[0].id && this.sector && this.sector.id && this.parameter && this.parameterName) {    
+        var grids = [];
+        this.mapParams = {};
+        this.$http.get("http://eccad.aeris-data.fr/eccad2web/rest/data/grids?fileid=" + this.file[0].id + "&param=" + this.parameterName + "&mask=" + this.isMask + "&total=" + this.isTotal + "&sectorid=" + this.sector.id)
+            .then(function(result){
+
+            var grids = result.data;
+            // min max selection bar
+            var min = grids[0].minGrid.toPrecision(4).toUpperCase();
+            var max = grids[0].maxGrid.toPrecision(4).toUpperCase();
+			      this.min = min;
+			      this.max = max;
+            var totalValue = grids[0].sumGrid.toPrecision(4);
+            
+            // begindates and enddates select selection bar
+            var dates = [];
+            grids.forEach(function(g) {
+                dates.push({id : g.id, date : g.dateString});
+            });
+
+            this.beginDates = dates;
+            console.log("BEGINDATES " + JSON.stringify(this.beginDates));
+            this.endDates = dates;
+            
+            var beginDateIndex = 0;
+            var selectedBegindate = this.beginDates[0];
+            this.beginDate = this.selectedBegindate;
+            var selectedEnddate = this.endDates[this.endDates.length-1];
+			      this.endDate = this.selectedEnddate;
+            
+            // set mapParams
+            this.mapParams.isCombine = false;
+            this.mapParams.layer = this.sectorName;
+            this.mapParams.colorScaleRange =  this.correctedMin(min) + "%2C" + max; 
+            this.mapParams.min = this.correctedMin(min);
+            this.mapParams.max = max;
+            this.mapParams.time = this.beginDates[0].date;
+            this.mapParams.totalValue = totalValue;
+            this.mapParams.filename = this.file[0].name;
+            this.mapParams.boundingBox = {latMin: -180, latMax: 180, lonMin: -90, lonMax: 90};
+
+            console.log(JSON.stringify(this.mapParams));
+
+            if(this.first) {
+              var ev1 = new CustomEvent('mapParams', { 'detail': this.mapParams });
+                  document.dispatchEvent(ev1); 
+              var ev2 = new CustomEvent('min', { 'detail': min });
+                  document.dispatchEvent(ev2); 
+              var ev3 = new CustomEvent('max', { 'detail': max });
+                  document.dispatchEvent(ev3); 
+          	}
+          	if(!this.first) {         
+              var ev4 = new CustomEvent('mapParams2', { 'detail': this.mapParams });
+                  document.dispatchEvent(ev4); 
+              var ev5 = new CustomEvent('min2', { 'detail': min });
+                  document.dispatchEvent(ev5); 
+              var ev6 = new CustomEvent('max2', { 'detail': max });
+                  document.dispatchEvent(ev6); 
+		  	    }
+        });      
       }
     },
 
@@ -169,7 +340,7 @@ export default {
         this.selectedBegindate = this.beginDates[this.beginDates.length - 1];
       }
     }
-  }
+  }  
 }
 </script>
 

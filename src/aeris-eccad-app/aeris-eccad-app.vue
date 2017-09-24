@@ -67,22 +67,22 @@
 
     <div v-show="auth && toolsMenu && toolsLink.text === 'Map Display'" class="minToolsHeight">
       <div>
-        <aeris-eccad-map service="http://thredds.sedoo.fr/thredds/wms/eccad/" first="true" name="map1"></aeris-eccad-map> 	
-        <aeris-eccad-map service="http://thredds.sedoo.fr/thredds/wms/eccad/" first="false" name="map2"></aeris-eccad-map> 	  
+        <aeris-eccad-map service="http://thredds.sedoo.fr/thredds/wms/eccad/" first="true" compare="false" name="map1"></aeris-eccad-map> 	
+        <aeris-eccad-map service="http://thredds.sedoo.fr/thredds/wms/eccad/" first="false" compare="false" name="map2"></aeris-eccad-map> 	  
       </div>
     </div>
 
     <div v-show="auth && toolsMenu && toolsLink.text === 'Mapcompare'">
       <div class="headerFlex">
         <div style="width: 49%;">
-          <aeris-eccad-map service="http://thredds.sedoo.fr/thredds/wms/eccad/" name="mapcompare1" small="true"></aeris-eccad-map> 	
+          <aeris-eccad-map service="http://thredds.sedoo.fr/thredds/wms/eccad/" first="true" compare="false" name="mapcompare1" small="true"></aeris-eccad-map> 	
         </div>
         <div style="width: 49%;">
-          <aeris-eccad-map service="http://thredds.sedoo.fr/thredds/wms/eccad/" first="false" name="mapcompare2" small="true"></aeris-eccad-map> 	  
+          <aeris-eccad-map service="http://thredds.sedoo.fr/thredds/wms/eccad/" first="false" compare="false" name="mapcompare2" small="true"></aeris-eccad-map> 	  
         </div>
       </div>
       <div>
-        <aeris-eccad-map service="http://thredds.sedoo.fr/thredds/wms/eccad/" name="compare" compare="true"></aeris-eccad-map> 	  
+        <aeris-eccad-map service="http://thredds.sedoo.fr/thredds/wms/eccad/" first="true" compare="true" name="compare"></aeris-eccad-map> 	  
       </div>
     </div>
 

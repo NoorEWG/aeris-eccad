@@ -186,7 +186,7 @@ export default {
   
   created: function () {
 	this.drawBaseMap();  
-	document.addEventListener('parameter', this.setUseMap);
+	document.addEventListener('userMap', this.setUseMap);
 	document.addEventListener('mainmenu', this.setMainMenu);
 	document.addEventListener('isMask', this.setMask);
 	document.addEventListener('mapCoordinates', this.setMapCoordinates);
@@ -215,14 +215,44 @@ export default {
     document.addEventListener('beginDate2', this.setBeginDate2);
 	document.addEventListener('beginDateIndex', this.setBeginDateIndex);
     document.addEventListener('beginDateIndex2', this.setBeginDateIndex2);
+	document.addEventListener('mapParams', this.setMapParams);
+    document.addEventListener('mapParams2', this.setMapParams2);
+	document.addEventListener('min', this.setMin);
+    document.addEventListener('max', this.setMax);
+	document.addEventListener('min2', this.setMin2);
+    document.addEventListener('max2', this.setMax2);
 	document.addEventListener('parameterName', this.setParameterName);
     document.addEventListener('parameterName2', this.setParameterName2);
   },
   
   methods: {
 
-    setCategory: function(evt) {
-       if(this.first) {
+    setMin: function(evt) {
+       if(this.first && !this.compare) {
+        this.min = evt.detail;
+       }  
+    },
+
+    setMin2: function(evt) {
+	   if(!this.first) {
+        this.min = evt.detail;
+       }  
+    },
+
+	setMax: function(evt) {
+       if(this.first && !this.compare) {
+        this.max = evt.detail;
+       }  
+    },
+
+    setMax2: function(evt) {
+       if(!this.first) {
+        this.max = evt.detail;
+       }  
+    },
+
+	setCategory: function(evt) {
+       if(this.first && !this.compare) {
         this.datatype = evt.detail;
        }  
     },
@@ -237,7 +267,7 @@ export default {
     },
 
     setParameter: function(evt) {
-	  if(this.first) {
+	   if(this.first && !this.compare) {
         this.parameter = evt.detail;
       } 
      },
@@ -252,7 +282,7 @@ export default {
     },
 
     setDataset: function(evt) {
-       if(this.first) {
+       if(this.first && !this.compare) {
         this.dataset = evt.detail;
        }  
     },
@@ -267,7 +297,7 @@ export default {
     },
 
 	setScenario: function(evt) {
-       if(this.first) {
+       if(this.first && !this.compare) {
         this.scenario = evt.detail;
        }  
     },
@@ -282,7 +312,7 @@ export default {
     },
 
 	setSector: function(evt) {
-       if(this.first) {
+       if(this.first && !this.compare) {
         this.sector = evt.detail;
        }  
     },
@@ -296,7 +326,7 @@ export default {
     },
 
 	setSectorName: function(evt) {
-       if(this.first) {
+        if(this.first && !this.compare) {
         this.sectorname = evt.detail;
        }  
 	  
@@ -312,7 +342,7 @@ export default {
     },
 
 	setUnit: function(evt) {
-       if(this.first) {
+       if(this.first && !this.compare) {
         this.unit = evt.detail;
        }  
     },
@@ -327,16 +357,16 @@ export default {
     },
 
 	setFile: function(evt) {
-       if(this.first) {
+        if(this.first && !this.compare) {
         this.file = evt.detail;
-		this.getGrids();
+		// this.getGrids();
        }  
     },
 
 	setFile2: function(evt) {
        if(!this.first) {
         this.file = evt.detail;
-		this.getGrids();
+		// this.getGrids();
        }  
 	   if(this.compare) {
 		this.file2 = evt.detail;
@@ -344,7 +374,7 @@ export default {
     },
 
 	setResolution: function(evt) {
-       if(this.first) {
+        if(this.first && !this.compare) {
         this.resolution = evt.detail;
        }  
     },
@@ -359,7 +389,8 @@ export default {
     },
 
 	setBeginDate: function(evt) {
-       if(this.first) {
+       console.log("BEGINDATE: " + evt.detail)
+	   if(this.first && !this.compare) {
         this.beginDate = evt.detail;
        }  
     },
@@ -373,11 +404,10 @@ export default {
 	   }
     },
 
-	setParameterName: function(evt) {
-	   if(this.first) {
+	 setParameterName: function(evt) {
+	   if(this.first && !this.compare) {
 		console.log("PARAM NAME: " + JSON.stringify(evt.detail))   
         this.parameterName = evt.detail;
-		this.getGrids();
        }  
     },
 
@@ -385,7 +415,6 @@ export default {
 	   if(!this.first) {
 		console.log("PARAM NAME 2: " + JSON.stringify(evt.detail))   
         this.parameterName = evt.detail;
-		this.getGrids();
        }  
 	   if(this.compare) {
 		this.parameterName2 = evt.detail;
@@ -405,19 +434,36 @@ export default {
     },
 
 	setTotal: function(evt) { 
-		if(this.first) {
+	  if(this.first && !this.compare) {
         this.isTotal = evt.detail;
-       } 
+      } 
 	},   
 
 	setTotal2: function(evt) { 
-		if(!this.first) {
+	  if(!this.first) {
         this.isTotal = evt.detail;
        }  
 	   if(this.compare) {
 		this.isTotal2 = evt.detail;
 	   }
 	},
+
+	setMapParams: function(evt) { 
+	  if(this.first && !this.compare) {
+        this.mapParams = evt.detail;
+		this.draw();
+		this.getLegend();
+		this.getTitle();
+      } 
+	},  
+	setMapParams2: function(evt) { 
+	  if(!this.first && !this.compare) {
+        this.mapParams = evt.detail;
+		this.draw();
+		this.getLegend();
+		this.getTitle();
+      } 
+	},   
 
     setUseMask: function(evt) {  
 		this.useMask = evt.detail;
@@ -526,88 +572,6 @@ export default {
 		this.title = this.dataset.titre + " " +  this.resolution.fullNameResolution + " " + this.datatype.shortName + " " + this.parameter.shortName + " " + scenario + " - "  + this.beginDate.date;
 	},
 
-    getGrids: function() {
-     
-	console.log("GET GRIDS " + JSON.stringify(this.file) + " / " + JSON.stringify(this.sector) + " / " + JSON.stringify(this.parameterName));  
-   	
-      if(this.file && this.file[0] && this.file[0].id && this.sector && this.sector.id && this.parameter && this.parameterName) {    
-        this.grids = [];
-        this.mapParams = {};
-        this.$http.get("http://eccad.aeris-data.fr/eccad2web/rest/data/grids?fileid=" + this.file[0].id + "&param=" + this.parameterName + "&mask=" + this.useMask + "&total=" + this.isTotal + "&sectorid=" + this.sector.id)
-            .then(function(result){
-
-            this.grids = result.data;
-            // min max selection bar
-            var min = this.grids[0].minGrid.toPrecision(4).toUpperCase();
-            var max = this.grids[0].maxGrid.toPrecision(4).toUpperCase();
-			this.min = min;
-			this.max = max;
-            var totalValue = this.grids[0].sumGrid.toPrecision(4);
-            
-            // begindates and enddates select selection bar
-            var beginDates = [];
-            var endDates = [];
-            this.grids.forEach(function(g) {
-                beginDates.push({id : g.id, date : g.dateString});
-                endDates.push({id : g.id, date : g.dateString});
-            });
-
-            var beginDateIndex = 0;
-            var selectedBegindate = beginDates[0];
-            this.beginDate = beginDates[0];
-            var selectedEnddate = endDates[endDates.length-1];
-			this.endDate = selectedEnddate;
-            
-            // set mapParams
-            this.mapParams.isCombine = false;
-            this.mapParams.layer = '';
-            this.mapParams.colorScaleRange =  this.correctedMin(min) + "%2C" + max; 
-            this.mapParams.min = this.correctedMin(min);
-            this.mapParams.max = max;
-            this.mapParams.time = beginDates[0].date;
-            this.mapParams.totalValue = totalValue;
-            this.mapParams.filename = this.file[0].name;
-            this.mapParams.boundingBox = {latMin: -180, latMax: 180, lonMin: -90, lonMax: 90};
-
-            if(this.first && !this.mapcompare) {
-				var ev1 = new CustomEvent('beginDates', { 'detail': beginDates });
-        		document.dispatchEvent(ev1); 
-				var ev2 = new CustomEvent('endDates', { 'detail': beginDates });
-        		document.dispatchEvent(ev2); 
-				var ev3 = new CustomEvent('mapParams', { 'detail': this.mapParams });
-        		document.dispatchEvent(ev3); 
-				var ev4 = new CustomEvent('min', { 'detail': min });
-        		document.dispatchEvent(ev4); 
-				var ev5 = new CustomEvent('max', { 'detail': max });
-        		document.dispatchEvent(ev5); 
-          	}
-          	if(!this.first && !this.mapcompare) {
-				var ev1 = new CustomEvent('beginDates2', { 'detail': beginDates });
-        		document.dispatchEvent(ev1); 
-				var ev2 = new CustomEvent('endDates2', { 'detail': beginDates });
-        		document.dispatchEvent(ev2); 
-				var ev3 = new CustomEvent('mapParams2', { 'detail': this.mapParams });
-        		document.dispatchEvent(ev3); 
-				var ev4 = new CustomEvent('min2', { 'detail': min });
-        		document.dispatchEvent(ev4); 
-				var ev5 = new CustomEvent('max2', { 'detail': max });
-        		document.dispatchEvent(ev5); 
-		  	}
-          	this.draw(); 
-		  	this.getLegend();
-			this.getTitle();             
-        });
-      } 
-	  else {
-		// TODO: empty map
-	  }
-    },  
-
-    correctedMin: function(value) {
-         // TODO
-         return value;
-    },  
-  
     setMask: function(mask) {
 	  if(mask && mask.length > 0) {
         this.useMask = true;
@@ -698,13 +662,14 @@ export default {
 	  }
 	  else {
 		// color range and logscale: todo  
-		if (this.mapService && this.sectorName && this.file && this.file[0].name && this.beginDate && this.beginDate.date) {	    
-			fileName = this.file[0].name;
+		// if (this.mapService && this.sectorName && this.file && this.file[0].name && this.beginDate && this.beginDate.date) {	    
+		 if(this.mapParams && this.mapParams.filename) {
+			fileName = this.mapParams.filename;
 			params = {
 				'FORMAT' : 'image/png',
 				'TRANSPARENT' : false,
-				'LAYERS' : this.sectorName,
-				'TIME' :  this.beginDate.date + 'T00%3A00%3A00.000Z',
+				'LAYERS' : this.mapParams.layer,
+				'TIME' :  this.mapParams.time + 'T00%3A00%3A00.000Z',
 				'COLORSCALERANGE' : this.mapParams.colorScaleRange,
 				'LOGSCALE' : this.logScale,
 				'BGCOLOR' : '0xFFFFFF',
@@ -716,6 +681,8 @@ export default {
 			}
 	    }
 	  }	
+
+	  console.log("PARAMS: " + JSON.stringify(params))
  
         if(params.isRegion) {
 		  // TODO 

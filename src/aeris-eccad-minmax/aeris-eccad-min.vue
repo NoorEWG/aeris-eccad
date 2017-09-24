@@ -11,7 +11,6 @@
 </template>
 
 <script>
-import { EventBus } from '../aeris-event-bus/aeris-event-bus.js';
 export default {
   props: {
     first: {
@@ -34,15 +33,17 @@ export default {
   watch: {
     min (value) {
       if(this.manual) {
-        if(this.compare)
-          EventBus.$emit('manualMinCompare', JSON.stringify(value));
+        if(this.compare) {
+          var ev1 = new CustomEvent('manualMinCompare', { 'detail': value });
+          document.dispatchEvent(ev1); 
+        }
         else {
           if(this.first) {
-            EventBus.$emit('manualMin', JSON.stringify(value));
-        
+            var ev2 = new CustomEvent('manualMin', { 'detail': value });
+            document.dispatchEvent(ev2); 
           } else {
-            EventBus.$emit('manualMin2', JSON.stringify(value));
-        
+            var ev3 = new CustomEvent('manualMin2', { 'detail': value });
+            document.dispatchEvent(ev3); 
           }
         }
       }
@@ -64,39 +65,51 @@ export default {
   },
   
   destroyed: function() { 
+    document.removeEventListener('range', this.setRange);
+    document.removeEventListener('min', this.setMin);
+    document.removeEventListener('min2', this.setMin2);
+    document.removeEventListener('compareResult', this.setCompareMin);
   },
   
   created: function () {
-    console.log("Aeris Eccad Min - Creating");
-    EventBus.$on('range', data => {
-      if(data === 'Manual') {
-        this.manual = true;
-      } else {
-        this.manual = false;
-      }
-    });
-    EventBus.$on('min', data => {
-      if(this.first & !this.compare) {
-        this.min = JSON.parse(data);
-      }
-    });
-    EventBus.$on('min2', data => {
-      if(!this.first & !this.compare) {
-        this.min = JSON.parse(data);
-      }
-    });
-    EventBus.$on('compareResult', data => {
-      if(this.compare) {
-        var data = JSON.parse(data)
-        this.min = data.minCompare;
-      }
-    });
+    console.log("Aeris Eccad Min - Creating");    
+    document.addEventListener('range', this.setRange);
+    document.addEventListener('min', this.setMin);
+    document.addEventListener('min2', this.setMin2);
+    document.addEventListener('compareResult', this.setCompareMin);
   },
   
   computed: {
   },
   
   methods: {     
+    
+    setRange: function(evt) {
+       if(evt.detail === 'Manual') {
+        this.manual = true;
+      } else {
+        this.manual = false;
+      }
+    },
+
+    setMin: function(evt) {
+       if(this.first && !this.compare) {
+        this.min = evt.detail;
+       }  
+    },
+
+    setMin2: function(evt) {
+	   if(!this.first) {
+        this.min = evt.detail;
+       }  
+    },
+
+    setCompareMin: function(evt) {
+        if(this.compare) {
+        this.min = evt.detail;
+      } 
+    },
+
   }
 }
 </script>
